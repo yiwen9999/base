@@ -1,0 +1,237 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<div th:include="common :: header"></div>
+<title>产品分类</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 频道管理 <span class="c-gray en">&gt;</span> 频道管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<table class="table">
+	<tr>
+		<td width="45%" class="va-t"><ul id="treeDemo" class="ztree"></ul></td>
+		<td width="55%">
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>父频道：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<span id="parentChannelSpan"></span>
+					<input type="hidden" id="parentChannelId">
+					<input type="hidden" id="channelId">
+				</div>
+			</div>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>频道名称：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="" placeholder="" id="channelName">
+				</div>
+			</div>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3">&nbsp;路径：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="" placeholder="" id="channelURL">
+				</div>
+			</div>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>排序：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="" placeholder="" id="channelSort">
+				</div>
+			</div>
+			<div class="row cl">
+				<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+					<input id="submitButton" class="btn btn-primary radius" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+				</div>
+			</div>
+		</td>
+	</tr>
+</table>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script> 
+<script type="text/javascript">
+var setting = {
+	view: {
+		addHoverDom: addHoverDom,
+		removeHoverDom: removeHoverDom,
+		showLine: true,
+		selectedMulti: false
+	},
+	data: {
+		simpleData: {
+			enable:true,
+			idKey: "id",
+			pIdKey: "pId",
+			rootPId: ""
+		}
+	}
+};
+
+var treeNodes=[{id:"root",pId:"",name:"根目录",open:true}];
+
+$(function(){  
+    $.ajax({  
+        async : false,  
+        cache:false,  
+        type: 'GET',  
+        dataType : "json",  
+        url: "/getChannelList",//请求的action路径  
+        error: function () {//请求失败处理函数  
+            layer.msg("获取频道列表失败",{icon:2,time:1000});
+        },  
+        success:function(data){ //请求成功后处理函数。    
+            var num=1;
+            $.each(data.data.topChannelList, function (index, channel) {
+            	var parentId = "root";
+            	var channelName = channel.name;
+            	if(channel.state==-1){
+            		channelName += " [已停用]";
+            	}
+            	treeNodes[num++]={id:channel.id,pId:parentId,name:channelName,open:true};
+            });
+            $.each(data.data.childChannelList, function (index, channel) {
+            	var parentId = "root";
+            	if(channel.parentChannel!=null){
+            		parentId = channel.parentChannel.id;
+            	}
+            	var channelName = channel.name;
+            	if(channel.state==-1){
+            		channelName += " [已停用]";
+            	}
+            	treeNodes[num++]={id:channel.id,pId:parentId,name:channelName,open:true};
+            });
+        }  
+    });  
+  
+    var t = $("#treeDemo");
+	t = $.fn.zTree.init(t, setting, treeNodes);
+	var zTree = $.fn.zTree.getZTreeObj("tree");
+});
+
+function addHoverDom(treeId, treeNode) {
+	var aObj = $("#" + treeNode.tId + "_a");
+	if ($("#buttonSpan_"+treeNode.id).length>0) return;
+	var editStr = "<span id='buttonSpan_" + treeNode.id + "'><button type='button' class='diyBtn1' id='diyBtn_" + treeNode.id + "_add' onfocus='this.blur();'>添加</button>";
+	if(treeNode.id!="root"){
+		editStr += "&nbsp;<button type='button' class='diyBtn1' id='diyBtn_" + treeNode.id + "_edit' onfocus='this.blur();'>修改</button>";
+		editStr += "&nbsp;<button type='button' class='diyBtn1' id='diyBtn_" + treeNode.id + "_delete' onfocus='this.blur();'>删除</button>";
+	}
+	editStr +="</span>";
+	aObj.append(editStr);
+	var btnAdd = $("#diyBtn_"+treeNode.id+"_add");
+	if (btnAdd) btnAdd.bind("click",{id:treeNode.id,name:treeNode.name},channelAdd);
+	var btnEdit = $("#diyBtn_"+treeNode.id+"_edit");
+	if (btnEdit) btnEdit.bind("click",{id:treeNode.id,name:treeNode.name},channelEdit);
+	var btnDelete = $("#diyBtn_"+treeNode.id+"_delete");
+	if (btnDelete) btnDelete.bind("click",{id:treeNode.id,name:treeNode.name},channelDelete);
+};
+function removeHoverDom(treeId, treeNode) {
+	$("#buttonSpan_"+treeNode.id).remove();
+};
+function channelAdd(object){
+	$("#parentChannelSpan").html("");
+	$("#parentChannelId").val("");
+	$("#channelId").val("");
+	$("#channelName").val("");
+	$("#channelURL").val("");
+	$("#channelSort").val("");
+	$("#submitButton").unbind("click").bind("click",saveChannel);
+
+	$("#parentChannelSpan").html(object.data.name);
+	$("#parentChannelId").val(object.data.id);
+}
+function channelEdit(object){
+	$.ajax({
+        type : "POST",
+        url : "/getChannelInfo",
+        data : {
+            "id" : object.data.id
+        },
+        dataType : "json",
+        success : function(data) {
+            if (data.code == "0") {
+            	parentChannelName="根目录";
+            	parentChannelId="root";
+            	if(data.data.parentChannel!=null){
+            		parentChannelName=data.data.parentChannel.name;
+            		parentChannelId=data.data.parentChannel.id;
+            	}
+                $("#parentChannelSpan").html(parentChannelName);
+				$("#parentChannelId").val(parentChannelId);
+				$("#channelId").val(data.data.id);
+				$("#channelName").val(data.data.name);
+				$("#channelURL").val(data.data.url);
+				$("#channelSort").val(data.data.sort);
+				$("#submitButton").unbind("click").bind("click",updateChannel);
+            } else {
+                layer.msg("获取频道信息失败",{icon:2,time:1000});
+            }
+        }
+    });
+}
+function channelDelete(object){
+	if(confirm("确定要删除【"+object.data.name+"】频道？")){
+		$.ajax({
+	        type : "POST",
+	        url : "/deleteChannel",
+	        data : {
+	            "id" : object.data.id
+	        },
+	        dataType : "json",
+	        success : function(data) {
+	            if (data.code == "0") {
+	            	layer.msg("频道删除成功",{icon:1,time:1000});
+	            	setTimeout("location.replace(location.href);",1000);
+	            } else {
+	                layer.msg(data.msg,{icon:2,time:2000});
+	            }
+	        }
+	    });
+	}
+}
+function saveChannel(){
+	$.ajax({
+        type : "POST",
+        url : "/saveChannel",
+        data : {
+            "parentChannel.id" : $("#parentChannelId").val(),
+            "id" : $("#channelId").val(),
+            "name" : $("#channelName").val(),
+            "url" : $("#channelURL").val(),
+            "sort" : $("#channelSort").val()
+        },
+        dataType : "json",
+        success : function(data) {
+            if (data.code == "0") {
+            	layer.msg("频道保存成功",{icon:1,time:1000});
+            	setTimeout("location.replace(location.href);",1000);
+            } else {
+                layer.msg(data.msg,{icon:2,time:2000});
+            }
+        }
+    });
+}
+function updateChannel(){
+	$.ajax({
+        type : "POST",
+        url : "/updateChannel",
+        data : {
+            "id" : $("#channelId").val(),
+            "name" : $("#channelName").val(),
+            "url" : $("#channelURL").val(),
+            "sort" : $("#channelSort").val()
+        },
+        dataType : "json",
+        success : function(data) {
+            if (data.code == "0") {
+            	layer.msg("频道修改成功",{icon:1,time:1000});
+            	setTimeout("location.replace(location.href);",1000);
+            } else {
+            	layer.msg(data.msg,{icon:2,time:2000});
+            }
+        }
+    });
+}
+</script>
+</body>
+</html>

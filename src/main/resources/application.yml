@@ -1,0 +1,30 @@
+web:
+  upload-path: /Users/hexuan/Desktop/develop/upload_file/
+  url: http://127.0.0.1:8080/index
+  zip-file-limit: 1000000
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/base?characterEncoding=utf8&useSSL=false
+    username: root
+    password: hex
+  thymeleaf:
+    cache: false
+    mode: LEGACYHTML5
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  mvc:
+    favicon:
+      enabled: false
+
+#logging:
+#  pattern:
+#    console: "%d - %msg%n"                                # 日志在控制台输出格式
+#  file: /Users/hexuan/Desktop/develop/log/tomcat/base.log # 日志文件生成路径及名称
+#  level:
+#        com.hex.base.LoggerTest: debug                   # 针对个别类进行日志级别设置
+#  level: debug                                           # 统一日志级别设置
+#  path: /Users/hexuan/Desktop/develop/log/tomcat

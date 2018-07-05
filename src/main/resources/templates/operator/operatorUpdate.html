@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<div th:include="common :: header"></div>
+<title>编辑作员</title>
+</head>
+<body>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-update">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>登录名：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="name" name="name" th:value="${operator!=null ? operator.name:''}">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>昵称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="nickname" name="nickname" th:value="${operator!=null ? operator.nickname:''}">
+			</div>
+		</div>
+		<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手机：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="" placeholder="" id="mobile" name="mobile" th:value="${operator!=null ? operator.mobile:''}">
+				</div>
+			</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>邮箱：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" placeholder="@" name="email" id="email" th:value="${operator!=null ? operator.email:''}">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<input type="hidden" id="roleIdInput" value="" th:value="${operator!=null&&operator.role!=null ? operator.role.id:''}"/>
+				<select class="select" name="roleId" id="roleSelect" size="1">
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+				<input type="hidden" id="operatorId" name="id" value="" th:value="${operator!=null ? operator.id:''}"/>
+			</div>
+		</div>
+	</form>
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script> 
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script> 
+<script type="text/javascript">
+$(function(){
+	$.ajax({
+        type : "GET",
+        url : "/getUsingRoleList",
+        dataType : "json",
+        success : function(data) {
+            if (data.code == "0") {
+				$.each(data.data, function (index, role) {
+					if($("#roleIdInput").val()==role.id){
+						$("#roleSelect").append("<option value='"+role.id+"' selected>"+role.name+"</option>");
+					}else{
+						$("#roleSelect").append("<option value='"+role.id+"'>"+role.name+"</option>");
+					}
+            	});
+            } else {
+                alert("获取信息失败");
+            }
+        }
+    });
+	$("#form-admin-update").validate({
+		rules:{
+			name:{
+				required:true,
+				minlength:2,
+				maxlength:20
+			},
+			nickname:{
+				required:true,
+				minlength:2,
+				maxlength:20
+			},
+			mobile:{
+				required:true,
+				minlength:11,
+				maxlength:11
+			},
+			email:{
+				required:true,
+				email:true,
+			},
+			roleId:{
+				required:true,
+			},
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+			$(form).ajaxSubmit({
+				url: "/updateOperator",
+				type: 'post',
+				dataType:"json",
+				success: function(data){
+					if(data.code==0){
+                        layer.msg('修改成功!',{icon:1,time:1000});
+                        setTimeout("window.parent.location.reload();",1000);
+					}else{
+                        layer.msg(data.msg,{icon:2,time:2000});
+					}
+				},
+                error: function(XmlHttpRequest, textStatus, errorThrown){
+					layer.msg('操作失败!',{icon:2,time:1000});
+					setTimeout("window.parent.location.reload();",1000);
+				}
+			});
+			/*var index = parent.layer.getFrameIndex(window.name);
+			parent.$('.btn-refresh').click();
+			parent.layer.close(index);*/
+		}
+	});
+});
+</script> 
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

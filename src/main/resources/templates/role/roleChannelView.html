@@ -1,0 +1,72 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<div th:include="common :: header"></div>
+<title>频道浏览</title>
+</head>
+<body>
+<table class="table">
+	<tr>
+		<td width="100%" class="va-t"><ul id="treeDemo" class="ztree"></ul></td>
+		<input type="hidden" id="roleId" value="" th:value="${roleId}"/>
+	</tr>
+</table>
+
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script> 
+<script type="text/javascript">
+var setting = {
+	view: {
+		showLine: true,
+		selectedMulti: false
+	},
+	data: {
+		simpleData: {
+			enable:true,
+			idKey: "id",
+			pIdKey: "pId",
+			rootPId: ""
+		}
+	}
+};
+
+var treeNodes=[];
+
+$(function(){  
+    $.ajax({  
+        async : false,  
+        cache:false,  
+        type: 'POST',  
+        dataType : "json",  
+        data : {
+        	roleId : $("#roleId").val()
+        },
+        url: "/getRoleChannelList",
+        error: function () {
+            layer.msg('请求失败!',{icon:2,time:1000});
+        },  
+        success:function(data){
+        	var num=0;
+            $.each(data.data.topChannelList, function (index, channel) {
+            	var parentId = "";
+            	var channelName = channel.name;
+            	treeNodes[num++]={id:channel.id,pId:parentId,name:channelName,open:true};
+            });
+            $.each(data.data.childChannelList, function (index, channel) {
+            	var parentId = "";
+            	if(channel.parentChannel!=null){
+            		parentId = channel.parentChannel.id;
+            	}
+            	var channelName = channel.name;
+            	treeNodes[num++]={id:channel.id,pId:parentId,name:channelName,open:true};
+            });
+        }
+    });
+    $.fn.zTree.init($("#treeDemo"), setting, treeNodes);
+});
+</script>
+</body>
+</html>

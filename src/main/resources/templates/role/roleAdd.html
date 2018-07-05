@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<div th:include="common :: header"></div>
+<title>添加角色</title>
+</head>
+<body>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-role-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="name" name="name" th:value="${role!=null ? role.name:''}">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">&nbsp;说明：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="remark" name="remark" th:value="${role!=null ? role.remark:''}">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>频道：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<ul id="treeDemo" class="ztree">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+				<input type="hidden" name="id" value="" th:value="${role!=null ? role.id:''}">
+			</div>
+		</div>
+		<div id="channelIdsDiv"></div>
+		<div>
+			<input type="hidden" class="roleChannelIds" th:each="roleChannel : ${roleChannels}" th:value="${roleChannel.id}">
+		</div>
+	</form>
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script> 
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script> 
+<script type="text/javascript">
+function validateCheck(){
+	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+	var nodes = treeObj.getCheckedNodes(true);
+	if(nodes.length>0){
+		for (var i = 0; i < nodes.length; i++) {
+            var channelIdsInput = $("<input>",{"type":"hidden","name":"channelIds","value":nodes[i].id});
+			$("#channelIdsDiv").append(channelIdsInput);
+		}
+		return true;
+	}else{
+		return false;
+	}
+}
+
+$(function(){
+	var setting = {
+		check: {
+			enable: true,
+			chkboxType:{"Y":"ps", "N":"ps"}
+		},
+		data: {
+			simpleData: {
+				enable: true
+			}
+		}
+	};
+	var treeNodes=[];
+
+	$.ajax({  
+        async : false,  
+        cache:false,  
+        type: 'GET',  
+        dataType : "json",  
+        url: "/getUsingChannelList",//请求的action路径  
+        error: function () {//请求失败处理函数  
+            alert('请求失败');  
+        },  
+        success:function(data){ //请求成功后处理函数。    
+            var num=0;
+            $.each(data.data.topChannelList, function (index, channel) {
+            	var parentId = "";
+            	var channelName = channel.name;
+            	treeNodes[num++]={id:channel.id,pId:parentId,name:channelName,open:true};
+            });
+            $.each(data.data.childChannelList, function (index, channel) {
+            	var parentId = "";
+            	if(channel.parentChannel!=null){
+            		parentId = channel.parentChannel.id;
+            	}
+            	var channelName = channel.name;
+            	treeNodes[num++]={id:channel.id,pId:parentId,name:channelName,open:true};
+            });
+        }
+    });
+    $.fn.zTree.init($("#treeDemo"), setting, treeNodes);
+
+	$("#form-role-add").validate({
+		rules:{
+			name:{
+				required:true,
+			}
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+			var isCheckChannel=validateCheck();
+			if(isCheckChannel){
+				$(form).ajaxSubmit({
+					type: 'post',
+					url: "/saveRole" ,
+					success: function(data){
+						if(data.code==0){
+                            layer.msg('操作成功!',{icon:1,time:1000});
+                            setTimeout("window.parent.location.reload();",1000);
+						}else{
+                            layer.msg(data.msg,{icon:2,time:2000});
+						}
+					},
+	                error: function(XmlHttpRequest, textStatus, errorThrown){
+						layer.msg('操作失败!',{icon:2,time:1000});
+						setTimeout("window.parent.location.reload();",1000);
+					}
+				});
+			}else
+				alert("请先选择频道后再提交！");
+		}
+	});
+
+	var roleChannels = $(".roleChannelIds");
+	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+	for (var i=0; i<roleChannels.length; i++) {
+		treeObj.checkNode(treeObj.getNodeByParam("id", roleChannels[i].value), true, false, false);
+	}
+});
+</script> 
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
