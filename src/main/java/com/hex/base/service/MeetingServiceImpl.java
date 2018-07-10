@@ -3,9 +3,8 @@ package com.hex.base.service;
 import com.hex.base.domain.Meeting;
 import com.hex.base.repository.MeetingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * User: hexuan
@@ -28,8 +27,8 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public List<Meeting> findAllMeetingList(Sort sort) {
-        return meetingRepository.findAll(sort);
+    public Page<Meeting> findAllMeetingList(Pageable pageable) {
+        return meetingRepository.findAll(pageable);
     }
 
     @Override

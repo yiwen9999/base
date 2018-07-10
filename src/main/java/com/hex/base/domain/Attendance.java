@@ -11,7 +11,7 @@ import java.util.Date;
 
 /**
  * 签到
- *
+ * <p>
  * User: hexuan
  * Date: 2018/7/5
  * Time: 下午5:14
@@ -20,7 +20,7 @@ import java.util.Date;
 @DynamicUpdate
 @Getter
 @Setter
-public class Attendance implements Serializable{
+public class Attendance implements Serializable {
 
     @Id
     private String id;

@@ -11,46 +11,36 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 讲者
+ * 商品
  * <p>
  * User: hexuan
- * Date: 2018/7/5
- * Time: 下午5:03
+ * Date: 2018/7/9
+ * Time: 上午10:06
  */
 @Entity
 @DynamicUpdate
 @Getter
 @Setter
-public class Speaker implements Serializable {
+public class Product implements Serializable {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     /**
-     * 姓名
+     * 名称
      */
     private String name;
 
     /**
-     * 职称
+     * 图片
      */
-    private String professionalTitle;
+    private String icon = "default_product_icon.jpg";
 
     /**
-     * 任职医院信息
+     * 状态
      */
-    private String hospitalInfo;
-
-    /**
-     * 照片
-     */
-    private String photo = "default_speaker_photo.jpg";
-
-    /**
-     * 简介
-     */
-    private String intro;
+    private Integer state;
 
     /**
      * 创建时间
@@ -62,6 +52,6 @@ public class Speaker implements Serializable {
      */
     private Date updateTime;
 
-    public Speaker() {
+    public Product() {
     }
 }

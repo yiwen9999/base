@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Date: 2018/7/6
  * Time: 下午4:09
  */
-public interface MeetingRepository extends JpaRepository<Meeting,Integer> {
+public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
 }

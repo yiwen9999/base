@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Date: 2018/7/6
  * Time: 下午4:10
  */
-public interface ScheduleRepository extends JpaRepository<Schedule,String> {
+public interface ScheduleRepository extends JpaRepository<Schedule, String> {
 
 }

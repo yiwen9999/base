@@ -1,9 +1,9 @@
 package com.hex.base.util;
 
 import com.hex.base.domain.Operator;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +65,7 @@ public class HexUtil {
         return new PageRequest(page, size, sort);
     }
 
-    public static Boolean isBlankString(String string){
+    public static Boolean isBlankString(String string) {
         return StringUtils.isBlank(string);
     }
 
@@ -73,15 +73,15 @@ public class HexUtil {
         return StringUtils.isNotBlank(string);
     }
 
-    public static Boolean isEmptyString(String string){
+    public static Boolean isEmptyString(String string) {
         return StringUtils.isEmpty(string);
     }
 
-    public static Boolean isNotEmptyString(String string){
+    public static Boolean isNotEmptyString(String string) {
         return StringUtils.isNotEmpty(string);
     }
 
-    public static Boolean isEmptyCollection(Collection collection){
+    public static Boolean isEmptyCollection(Collection collection) {
         return CollectionUtils.isEmpty(collection);
     }
 

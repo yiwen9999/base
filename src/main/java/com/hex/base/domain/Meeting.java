@@ -40,7 +40,7 @@ public class Meeting implements Serializable {
     /**
      * 日期信息
      */
-    private String time;
+    private String timeStr;
 
     /**
      * 会议小贴士
@@ -48,14 +48,19 @@ public class Meeting implements Serializable {
     private String tips;
 
     /**
-     * 卫星会信息
+     * 会议图片
      */
-    private String satelliteMeetingInfo;
+    private String img = "default_meeting_img.jpg";
 
     /**
-     * 卫星会图片
+     * 会议logo
      */
-    private String satelliteMeetingImg;
+    private String logo = "default_meeting_logo.jpg";
+
+    /**
+     * 状态
+     */
+    private Integer state;
 
     /**
      * 创建时间

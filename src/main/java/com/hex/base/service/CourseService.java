@@ -1,9 +1,8 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Course;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * User: hexuan
@@ -15,7 +14,7 @@ public interface CourseService {
 
     Course findCourseById(Integer id);
 
-    List<Course> findAllCourseList(Sort sort);
+    Page<Course> findAllCourseList(Pageable pageable);
 
     void deleteCourseById(Integer id);
 }

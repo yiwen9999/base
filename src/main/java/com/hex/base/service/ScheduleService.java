@@ -1,9 +1,8 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Schedule;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * User: hexuan
@@ -15,7 +14,7 @@ public interface ScheduleService {
 
     Schedule findScheduleById(String id);
 
-    List<Schedule> findAllScheduleList(Sort sort);
+    Page<Schedule> findAllScheduleList(Pageable pageable);
 
     void deleteScheduleById(String id);
 }

@@ -3,9 +3,8 @@ package com.hex.base.service;
 import com.hex.base.domain.Schedule;
 import com.hex.base.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * User: hexuan
@@ -28,8 +27,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<Schedule> findAllScheduleList(Sort sort) {
-        return scheduleRepository.findAll(sort);
+    public Page<Schedule> findAllScheduleList(Pageable pageable) {
+        return scheduleRepository.findAll(pageable);
     }
 
     @Override

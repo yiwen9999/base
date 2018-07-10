@@ -3,9 +3,8 @@ package com.hex.base.service;
 import com.hex.base.domain.Speaker;
 import com.hex.base.repository.SpeakerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * User: hexuan
@@ -28,8 +27,8 @@ public class SpeakerServiceImpl implements SpeakerService {
     }
 
     @Override
-    public List<Speaker> findAllSpeakerList(Sort sort) {
-        return speakerRepository.findAll(sort);
+    public Page<Speaker> findAllSpeakerList(Pageable pageable) {
+        return speakerRepository.findAll(pageable);
     }
 
     @Override

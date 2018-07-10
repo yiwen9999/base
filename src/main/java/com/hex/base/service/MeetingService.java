@@ -1,9 +1,8 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Meeting;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * User: hexuan
@@ -15,7 +14,7 @@ public interface MeetingService {
 
     Meeting findMeetingById(Integer id);
 
-    List<Meeting> findAllMeetingList(Sort sort);
+    Page<Meeting> findAllMeetingList(Pageable pageable);
 
     void deleteMeetingById(Integer id);
 }

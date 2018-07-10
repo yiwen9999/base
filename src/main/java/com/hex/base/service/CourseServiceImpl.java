@@ -3,9 +3,8 @@ package com.hex.base.service;
 import com.hex.base.domain.Course;
 import com.hex.base.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * User: hexuan
@@ -28,8 +27,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Course> findAllCourseList(Sort sort) {
-        return courseRepository.findAll(sort);
+    public Page<Course> findAllCourseList(Pageable pageable) {
+        return courseRepository.findAll(pageable);
     }
 
     @Override

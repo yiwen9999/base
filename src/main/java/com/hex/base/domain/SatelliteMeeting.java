@@ -11,46 +11,29 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 讲者
- * <p>
  * User: hexuan
- * Date: 2018/7/5
- * Time: 下午5:03
+ * Date: 2018/7/9
+ * Time: 上午10:10
  */
 @Entity
 @DynamicUpdate
 @Getter
 @Setter
-public class Speaker implements Serializable {
+public class SatelliteMeeting implements Serializable {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     /**
-     * 姓名
+     * 图片
      */
-    private String name;
+    private String img = "default_satelliteMeeting_img.jpg";
 
     /**
-     * 职称
+     * 会议信息
      */
-    private String professionalTitle;
-
-    /**
-     * 任职医院信息
-     */
-    private String hospitalInfo;
-
-    /**
-     * 照片
-     */
-    private String photo = "default_speaker_photo.jpg";
-
-    /**
-     * 简介
-     */
-    private String intro;
+    private String info;
 
     /**
      * 创建时间
@@ -62,6 +45,6 @@ public class Speaker implements Serializable {
      */
     private Date updateTime;
 
-    public Speaker() {
+    public SatelliteMeeting() {
     }
 }

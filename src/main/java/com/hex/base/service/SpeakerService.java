@@ -1,9 +1,8 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Speaker;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * User: hexuan
@@ -15,7 +14,7 @@ public interface SpeakerService {
 
     Speaker findSpeakerById(Integer id);
 
-    List<Speaker> findAllSpeakerList(Sort sort);
+    Page<Speaker> findAllSpeakerList(Pageable pageable);
 
     void deleteSpeakerById(Integer id);
 }

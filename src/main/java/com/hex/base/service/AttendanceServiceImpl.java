@@ -3,9 +3,8 @@ package com.hex.base.service;
 import com.hex.base.domain.Attendance;
 import com.hex.base.repository.AttendanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * User: hexuan
@@ -28,8 +27,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public List<Attendance> findAllAttendanceList(Sort sort) {
-        return attendanceRepository.findAll(sort);
+    public Page<Attendance> findAllAttendanceList(Pageable pageable) {
+        return attendanceRepository.findAll(pageable);
     }
 
     @Override

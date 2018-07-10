@@ -31,21 +31,19 @@ public class Schedule implements Serializable {
     private String place;
 
     /**
-     * 时间
+     * 时间段
      */
-    private String time;
+    private String timeStr;
+
+    /**
+     * 日期
+     */
+    private Date time;
 
     /**
      * 会议内容
      */
-    private String meetingContent;
-
-    // TODO
-    /**
-     * 讲者
-     */
-//    private Speaker speaker;
-    private String speakerName;
+    private String content;
 
     /**
      * 创建时间

@@ -1,9 +1,8 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Attendance;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * User: hexuan
@@ -15,7 +14,7 @@ public interface AttendanceService {
 
     Attendance findAttendanceById(String id);
 
-    List<Attendance> findAllAttendanceList(Sort sort);
+    Page<Attendance> findAllAttendanceList(Pageable pageable);
 
     void deleteAttendanceById(String id);
 }
