@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,9 +70,10 @@ public class CourseCategoryController {
                                             @RequestParam(defaultValue = "50") Integer size,
                                             @RequestParam(defaultValue = "sort") String sortStr,
                                             @RequestParam(defaultValue = "asc") String asc) {
-        Page<CourseCategory> courseCategoryPage = courseCategoryService.findAllCourseCategoryList(HexUtil.getPageRequest(page, size, sortStr, asc));
+        Pageable pageable = HexUtil.getPageRequest(page, size, sortStr, asc);
+        Page<CourseCategory> courseCategoryPage = courseCategoryService.findAllCourseCategoryList(pageable);
         List<CourseCategoryVO> courseCategoryVOList = CourseCategory2CourseCategoryVOConverter.converter(courseCategoryPage.getContent());
-        return ResultUtil.success(new PageImpl<>(courseCategoryVOList, HexUtil.getPageRequest(page, size, sortStr, asc), courseCategoryPage.getTotalElements()));
+        return ResultUtil.success(new PageImpl<>(courseCategoryVOList, pageable, courseCategoryPage.getTotalElements()));
     }
 
     /**

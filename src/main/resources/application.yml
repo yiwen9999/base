@@ -1,5 +1,5 @@
 web:
-  upload-path: /Users/hexuan/Desktop/develop/upload_file/
+  upload-path: /Users/hexuan/Desktop/develop/upload_file_beauty/
   url: http://127.0.0.1:8080/index
   zip-file-limit: 1000000
 

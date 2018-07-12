@@ -1,6 +1,7 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Speaker;
+import com.hex.base.dto.SpeakerCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,4 +18,6 @@ public interface SpeakerService {
     Page<Speaker> findAllSpeakerList(Pageable pageable);
 
     void deleteSpeakerById(Integer id);
+
+    Page<Speaker> findSpeakerListByCondition(SpeakerCondition speakerCondition, Pageable pageable);
 }

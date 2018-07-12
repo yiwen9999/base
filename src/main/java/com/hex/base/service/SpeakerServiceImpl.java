@@ -1,6 +1,8 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Speaker;
+import com.hex.base.dto.SpeakerCondition;
+import com.hex.base.repository.MySpec;
 import com.hex.base.repository.SpeakerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,5 +38,10 @@ public class SpeakerServiceImpl implements SpeakerService {
     @Override
     public void deleteSpeakerById(Integer id) {
         speakerRepository.delete(id);
+    }
+
+    @Override
+    public Page<Speaker> findSpeakerListByCondition(SpeakerCondition speakerCondition, Pageable pageable) {
+        return speakerRepository.findAll(MySpec.findSpeakers(speakerCondition), pageable);
     }
 }

@@ -1,14 +1,12 @@
 package com.hex.base.repository;
 
-import com.hex.base.domain.Course;
-import com.hex.base.domain.CourseCategory;
-import com.hex.base.domain.Operator;
-import com.hex.base.domain.Role;
+import com.hex.base.domain.*;
 import com.hex.base.dto.CourseCategoryCondition;
 import com.hex.base.dto.CourseCondition;
+import com.hex.base.dto.SpeakerCondition;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -104,6 +102,22 @@ public class MySpec {
                         pList.add(criteriaBuilder.equal(root.get("courseCategoryId").as(Integer.class), courseCategoryId));
                     }
                     predicate.add(criteriaBuilder.or(pList.toArray(new Predicate[pList.size()])));
+                }
+
+                Predicate[] pre = new Predicate[predicate.size()];
+                return criteriaQuery.where(predicate.toArray(pre)).getRestriction();
+            }
+        };
+    }
+
+    public static Specification<Speaker> findSpeakers(SpeakerCondition speakerCondition) {
+        return new Specification<Speaker>() {
+            @Override
+            public Predicate toPredicate(Root<Speaker> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicate = new ArrayList<>();
+
+                if (StringUtils.isNotBlank(speakerCondition.getName())) {
+                    predicate.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + speakerCondition.getName() + "%"));
                 }
 
                 Predicate[] pre = new Predicate[predicate.size()];

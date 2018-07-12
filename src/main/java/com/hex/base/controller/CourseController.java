@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,9 +55,10 @@ public class CourseController {
                                             @RequestParam(defaultValue = "20") Integer size,
                                             @RequestParam(defaultValue = "createTime") String sortStr,
                                             @RequestParam(defaultValue = "desc") String asc) {
-        Page<Course> coursePage = courseService.findCourseListByCondition(courseCondition, HexUtil.getPageRequest(page, size, sortStr, asc));
+        Pageable pageable = HexUtil.getPageRequest(page, size, sortStr, asc);
+        Page<Course> coursePage = courseService.findCourseListByCondition(courseCondition, pageable);
         List<CourseVO> courseVOList = Course2CourseVOConverter.converter(coursePage.getContent());
-        return ResultUtil.success(new PageImpl<>(courseVOList, HexUtil.getPageRequest(page, size, sortStr, asc), coursePage.getTotalElements()));
+        return ResultUtil.success(new PageImpl<>(courseVOList, pageable, coursePage.getTotalElements()));
     }
 
     @PostMapping("/deleteCourse")
