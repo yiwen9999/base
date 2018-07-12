@@ -1,7 +1,7 @@
 package com.hex.base.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.hex.base.enums.ObjectStateEnum;
+import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
@@ -19,8 +19,7 @@ import java.util.Date;
  */
 @Entity
 @DynamicUpdate
-@Getter
-@Setter
+@Data
 public class Product implements Serializable {
 
     @Id
@@ -38,9 +37,9 @@ public class Product implements Serializable {
     private String icon = "default_product_icon.jpg";
 
     /**
-     * 状态
+     * 状态 1为启用 -1为停用
      */
-    private Integer state;
+    private Integer state = ObjectStateEnum.START_USING.getCode();
 
     /**
      * 创建时间
@@ -51,7 +50,4 @@ public class Product implements Serializable {
      * 修改时间
      */
     private Date updateTime;
-
-    public Product() {
-    }
 }

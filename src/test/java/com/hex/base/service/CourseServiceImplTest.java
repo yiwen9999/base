@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -13,6 +15,7 @@ import static org.junit.Assert.*;
 public class CourseServiceImplTest {
 
     @Test
+    @Transactional
     public void saveCourse() throws Exception {
     }
 

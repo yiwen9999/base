@@ -1,7 +1,6 @@
 package com.hex.base.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
@@ -17,13 +16,17 @@ import java.util.Date;
  */
 @Entity
 @DynamicUpdate
-@Getter
-@Setter
+@Data
 public class SatelliteMeeting implements Serializable {
 
     @Id
     @GeneratedValue
     private Integer id;
+
+    /**
+     * 会议id
+     */
+    private Integer meetingId;
 
     /**
      * 图片
@@ -44,7 +47,4 @@ public class SatelliteMeeting implements Serializable {
      * 修改时间
      */
     private Date updateTime;
-
-    public SatelliteMeeting() {
-    }
 }

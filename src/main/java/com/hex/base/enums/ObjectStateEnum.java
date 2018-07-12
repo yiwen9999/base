@@ -3,16 +3,16 @@ package com.hex.base.enums;
 import lombok.Getter;
 
 @Getter
-public enum ProductStateEnum implements CodeEnum {
+public enum ObjectStateEnum implements CodeEnum {
 
-    DOWN(-1, "下架"),
-    UP(1, "上架"),;
+    BLOCK_UP(-1, "停用"),
+    START_USING(1, "启用"),;
 
     private Integer code;
 
     private String msg;
 
-    ProductStateEnum(Integer code, String msg) {
+    ObjectStateEnum(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
     }

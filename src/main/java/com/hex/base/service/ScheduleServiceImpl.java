@@ -5,12 +5,14 @@ import com.hex.base.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 /**
  * User: hexuan
  * Date: 2018/7/6
  * Time: 下午4:37
  */
+@Service
 public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired

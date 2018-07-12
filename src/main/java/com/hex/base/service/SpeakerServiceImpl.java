@@ -5,12 +5,14 @@ import com.hex.base.repository.SpeakerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 /**
  * User: hexuan
  * Date: 2018/7/6
  * Time: 下午4:43
  */
+@Service
 public class SpeakerServiceImpl implements SpeakerService {
 
     @Autowired

@@ -4,46 +4,58 @@ import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 课程
- * <p>
+ * 用户信息
  * User: hexuan
- * Date: 2018/7/5
- * Time: 下午5:19
+ * Date: 2018/7/12
+ * Time: 上午11:00
  */
 @Entity
 @DynamicUpdate
 @Data
-public class Course implements Serializable {
+public class UserInfo implements Serializable {
 
     @Id
-    @GeneratedValue
-    private Integer id;
+    private String id;
 
     /**
-     * 分类id
+     * 微信id
      */
-    private Integer courseCategoryId;
+    private String openId;
 
     /**
-     * 视频名称
+     * 昵称
+     */
+    private String nickName;
+
+    /**
+     * 性别 true 男 false 女
+     */
+    private Boolean male;
+
+    /**
+     * 头像
+     */
+    private String icon;
+
+    /**
+     * 姓名
      */
     private String name;
 
     /**
-     * 简介
+     * 联系电话
      */
-    private String intro;
+    private String phone;
 
     /**
-     * 视频地址
+     * 所在医院
      */
-    private String videoPath;
+    private String hospital;
 
     /**
      * 创建时间
