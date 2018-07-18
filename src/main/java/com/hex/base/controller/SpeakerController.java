@@ -3,6 +3,7 @@ package com.hex.base.controller;
 import com.hex.base.converter.Speaker2SpeakerVOConverter;
 import com.hex.base.domain.Speaker;
 import com.hex.base.dto.SpeakerCondition;
+import com.hex.base.enums.DefaultImgNameEnum;
 import com.hex.base.enums.ResultEnum;
 import com.hex.base.exception.MyException;
 import com.hex.base.form.SpeakerForm;
@@ -22,12 +23,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * User: hexuan
@@ -64,26 +62,9 @@ public class SpeakerController {
         }
         BeanUtils.copyProperties(speakerForm, speaker);
 
-        MultipartFile photoFile = speakerForm.getPhotoFile();
-        if (null != photoFile) {
-            /**
-             * 若存在旧照片进行删除
-             */
-            if (StringUtils.isNotBlank(speaker.getPhoto())) {
-                File deleteFile = new File(path + speaker.getPhoto());
-                if (deleteFile.exists()) {
-                    deleteFile.delete();
-                }
-            }
-            /**
-             * 保存照片文件
-             */
-            String fileName = photoFile.getOriginalFilename();
-            String suffixName = fileName.substring(fileName.lastIndexOf("."));
-            fileName = UUID.randomUUID() + suffixName;
+        if (null != speakerForm.getPhotoFile()) {
             try {
-                FileUtil.uploadImgFile(photoFile, path, fileName, zipFileLimit);
-                speaker.setPhoto(fileName);
+                speaker.setPhoto(FileUtil.uploadImgFileNew(speakerForm.getPhotoFile(), speaker.getPhoto(), DefaultImgNameEnum.SPEAKER_PHOTO.getImgName(), path, zipFileLimit));
             } catch (Exception e) {
                 e.printStackTrace();
                 return ResultUtil.error(ResultEnum.UPLOAD_FAIL.getCode(), ResultEnum.UPLOAD_FAIL.getMsg());
@@ -103,6 +84,20 @@ public class SpeakerController {
         Page<Speaker> speakerPage = speakerService.findSpeakerListByCondition(speakerCondition, pageable);
         List<SpeakerVO> speakerVOList = Speaker2SpeakerVOConverter.converter(speakerPage.getContent());
         return ResultUtil.success(new PageImpl<>(speakerVOList, pageable, speakerPage.getTotalElements()));
+    }
+
+    @PostMapping("/deleteSpeaker")
+    public Object deleteSpeaker(Integer speakerId) {
+        Speaker speaker = speakerService.findSpeakerById(speakerId);
+        if (null != speaker) {
+            if (StringUtils.isNotBlank(speaker.getPhoto()) && !speaker.getPhoto().equals(DefaultImgNameEnum.SPEAKER_PHOTO.getImgName())) {
+                FileUtil.deleteFile(path, speaker.getPhoto());
+            }
+            speakerService.deleteSpeakerById(speakerId);
+            return ResultUtil.success();
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "讲者id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
     }
 
 }

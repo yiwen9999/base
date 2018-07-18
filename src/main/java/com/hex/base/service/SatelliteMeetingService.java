@@ -4,6 +4,8 @@ import com.hex.base.domain.SatelliteMeeting;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * User: hexuan
  * Date: 2018/7/10
@@ -17,4 +19,6 @@ public interface SatelliteMeetingService {
     Page<SatelliteMeeting> findAllSatelliteMeetingList(Pageable pageable);
 
     void deleteSatelliteMeetingById(Integer id);
+
+    List<SatelliteMeeting> findAllSatelliteMeetingListByMeetingIdOrderByCreateTime(Integer meetingId);
 }

@@ -3,6 +3,7 @@ package com.hex.base.repository;
 import com.hex.base.domain.*;
 import com.hex.base.dto.CourseCategoryCondition;
 import com.hex.base.dto.CourseCondition;
+import com.hex.base.dto.MeetingCondition;
 import com.hex.base.dto.SpeakerCondition;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
@@ -118,6 +119,26 @@ public class MySpec {
 
                 if (StringUtils.isNotBlank(speakerCondition.getName())) {
                     predicate.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + speakerCondition.getName() + "%"));
+                }
+
+                Predicate[] pre = new Predicate[predicate.size()];
+                return criteriaQuery.where(predicate.toArray(pre)).getRestriction();
+            }
+        };
+    }
+
+    public static Specification<Meeting> findMeetings(MeetingCondition meetingCondition) {
+        return new Specification<Meeting>() {
+            @Override
+            public Predicate toPredicate(Root<Meeting> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicate = new ArrayList<>();
+
+                if (StringUtils.isNotBlank(meetingCondition.getName())) {
+                    predicate.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + meetingCondition.getName() + "%"));
+                }
+
+                if (null != meetingCondition.getState()) {
+                    predicate.add(criteriaBuilder.equal(root.get("state").as(Integer.class), meetingCondition.getState()));
                 }
 
                 Predicate[] pre = new Predicate[predicate.size()];

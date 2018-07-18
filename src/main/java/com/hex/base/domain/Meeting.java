@@ -1,5 +1,8 @@
 package com.hex.base.domain;
 
+import com.hex.base.enums.DefaultImgNameEnum;
+import com.hex.base.enums.MeetingStateEnum;
+import com.hex.base.util.EnumUtil;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -48,17 +51,17 @@ public class Meeting implements Serializable {
     /**
      * 会议图片
      */
-    private String img = "default_meeting_img.jpg";
+    private String img = DefaultImgNameEnum.MEETING_IMG.getImgName();
 
     /**
      * 会议logo
      */
-    private String logo = "default_meeting_logo.jpg";
+    private String logo = DefaultImgNameEnum.MEETING_LOGO.getImgName();
 
     /**
      * 状态
      */
-    private Integer state;
+    private Integer state = MeetingStateEnum.NOT_START.getCode();
 
     /**
      * 创建时间
@@ -69,4 +72,8 @@ public class Meeting implements Serializable {
      * 修改时间
      */
     private Date updateTime;
+
+    public MeetingStateEnum stateStr() {
+        return EnumUtil.getCode(state, MeetingStateEnum.class);
+    }
 }

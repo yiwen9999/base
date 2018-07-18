@@ -1,6 +1,8 @@
 package com.hex.base.domain;
 
+import com.hex.base.enums.DefaultImgNameEnum;
 import com.hex.base.enums.ObjectStateEnum;
+import com.hex.base.util.EnumUtil;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -34,7 +36,7 @@ public class Product implements Serializable {
     /**
      * 图片
      */
-    private String icon = "default_product_icon.jpg";
+    private String icon = DefaultImgNameEnum.PRODUCT_ICON.getImgName();
 
     /**
      * 状态 1为启用 -1为停用
@@ -50,4 +52,8 @@ public class Product implements Serializable {
      * 修改时间
      */
     private Date updateTime;
+
+    public ObjectStateEnum stateStr() {
+        return EnumUtil.getCode(state, ObjectStateEnum.class);
+    }
 }

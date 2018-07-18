@@ -1,6 +1,7 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Meeting;
+import com.hex.base.dto.MeetingCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,4 +18,8 @@ public interface MeetingService {
     Page<Meeting> findAllMeetingList(Pageable pageable);
 
     void deleteMeetingById(Integer id);
+
+    Page<Meeting> findMeetingListByCondition(MeetingCondition meetingCondition, Pageable pageable);
+
+    Meeting updateMeetingState(Integer meetingId, Integer state);
 }

@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * User: hexuan
  * Date: 2018/7/10
@@ -36,5 +38,10 @@ public class SatelliteMeetingServiceImpl implements SatelliteMeetingService {
     @Override
     public void deleteSatelliteMeetingById(Integer id) {
         satelliteMeetingRepository.delete(id);
+    }
+
+    @Override
+    public List<SatelliteMeeting> findAllSatelliteMeetingListByMeetingIdOrderByCreateTime(Integer meetingId) {
+        return satelliteMeetingRepository.findAllByMeetingIdOrderByCreateTime(meetingId);
     }
 }

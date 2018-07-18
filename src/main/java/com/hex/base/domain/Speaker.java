@@ -1,5 +1,6 @@
 package com.hex.base.domain;
 
+import com.hex.base.enums.DefaultImgNameEnum;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -43,7 +44,7 @@ public class Speaker implements Serializable {
     /**
      * 照片
      */
-    private String photo = "default_speaker_photo.jpg";
+    private String photo = DefaultImgNameEnum.SPEAKER_PHOTO.getImgName();
 
     /**
      * 简介

@@ -1,5 +1,6 @@
 package com.hex.base.domain;
 
+import com.hex.base.enums.DefaultImgNameEnum;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -31,7 +32,7 @@ public class SatelliteMeeting implements Serializable {
     /**
      * 图片
      */
-    private String img = "default_satelliteMeeting_img.jpg";
+    private String img = DefaultImgNameEnum.SATELLITE_MEETING_IMG.getImgName();
 
     /**
      * 会议信息
