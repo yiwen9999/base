@@ -1,6 +1,7 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Product;
+import com.hex.base.dto.ProductCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,4 +20,6 @@ public interface ProductService {
     void deleteProductById(Integer id);
 
     Product updateProductStateById(Integer id);
+
+    Page<Product> findProductListByCondition(ProductCondition productCondition, Pageable pageable);
 }

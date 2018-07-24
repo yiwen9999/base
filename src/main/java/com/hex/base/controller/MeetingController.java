@@ -53,6 +53,9 @@ public class MeetingController {
         Meeting meeting = new Meeting();
         if (null != meetingForm.getId()) {
             meeting = meetingService.findMeetingById(meetingForm.getId());
+            if (null == meeting) {
+                return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "id " + ResultEnum.ERROR_PARAM.getMsg());
+            }
         }
         BeanUtils.copyProperties(meetingForm, meeting);
 

@@ -59,6 +59,9 @@ public class SpeakerController {
         Speaker speaker = new Speaker();
         if (null != speakerForm.getId()) {
             speaker = speakerService.findSpeakerById(speakerForm.getId());
+            if (null == speaker) {
+                return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "id " + ResultEnum.ERROR_PARAM.getMsg());
+            }
         }
         BeanUtils.copyProperties(speakerForm, speaker);
 

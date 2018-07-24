@@ -1,7 +1,9 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Product;
+import com.hex.base.dto.ProductCondition;
 import com.hex.base.enums.ObjectStateEnum;
+import com.hex.base.repository.MySpec;
 import com.hex.base.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,5 +53,10 @@ public class ProductServiceImpl implements ProductService {
             productRepository.save(product);
         }
         return product;
+    }
+
+    @Override
+    public Page<Product> findProductListByCondition(ProductCondition productCondition, Pageable pageable) {
+        return productRepository.findAll(MySpec.findProducts(productCondition), pageable);
     }
 }

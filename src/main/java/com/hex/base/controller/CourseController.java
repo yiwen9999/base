@@ -44,6 +44,9 @@ public class CourseController {
         Course course = new Course();
         if (null != courseForm.getId()) {
             course = courseService.findCourseById(courseForm.getId());
+            if (null == course) {
+                return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "id " + ResultEnum.ERROR_PARAM.getMsg());
+            }
         }
         BeanUtils.copyProperties(courseForm, course);
         return ResultUtil.success(courseService.saveCourse(course).getId());

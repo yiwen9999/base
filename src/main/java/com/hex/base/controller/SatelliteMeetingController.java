@@ -45,6 +45,9 @@ public class SatelliteMeetingController {
         SatelliteMeeting satelliteMeeting = new SatelliteMeeting();
         if (null != satelliteMeetingForm.getId()) {
             satelliteMeeting = satelliteMeetingService.findSatelliteMeetingById(satelliteMeetingForm.getId());
+            if (null == satelliteMeeting) {
+                return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "id " + ResultEnum.ERROR_PARAM.getMsg());
+            }
         }
         BeanUtils.copyProperties(satelliteMeetingForm, satelliteMeeting);
 

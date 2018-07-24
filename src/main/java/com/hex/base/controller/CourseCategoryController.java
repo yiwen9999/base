@@ -51,6 +51,9 @@ public class CourseCategoryController {
         CourseCategory courseCategory = new CourseCategory();
         if (null != courseCategoryForm.getId()) {
             courseCategory = courseCategoryService.findCourseCategoryById(courseCategoryForm.getId());
+            if (null == courseCategory) {
+                return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "id " + ResultEnum.ERROR_PARAM.getMsg());
+            }
         }
         BeanUtils.copyProperties(courseCategoryForm, courseCategory);
         return ResultUtil.success(courseCategoryService.saveCourseCategory(courseCategory).getId());

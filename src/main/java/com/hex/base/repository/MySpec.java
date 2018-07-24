@@ -1,10 +1,7 @@
 package com.hex.base.repository;
 
 import com.hex.base.domain.*;
-import com.hex.base.dto.CourseCategoryCondition;
-import com.hex.base.dto.CourseCondition;
-import com.hex.base.dto.MeetingCondition;
-import com.hex.base.dto.SpeakerCondition;
+import com.hex.base.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
@@ -139,6 +136,26 @@ public class MySpec {
 
                 if (null != meetingCondition.getState()) {
                     predicate.add(criteriaBuilder.equal(root.get("state").as(Integer.class), meetingCondition.getState()));
+                }
+
+                Predicate[] pre = new Predicate[predicate.size()];
+                return criteriaQuery.where(predicate.toArray(pre)).getRestriction();
+            }
+        };
+    }
+
+    public static Specification<Product> findProducts(ProductCondition productCondition) {
+        return new Specification<Product>() {
+            @Override
+            public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicate = new ArrayList<>();
+
+                if (StringUtils.isNotBlank(productCondition.getName())) {
+                    predicate.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + productCondition.getName() + "%"));
+                }
+
+                if (null != productCondition.getState()) {
+                    predicate.add(criteriaBuilder.equal(root.get("state").as(Integer.class), productCondition.getState()));
                 }
 
                 Predicate[] pre = new Predicate[predicate.size()];
