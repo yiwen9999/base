@@ -44,4 +44,9 @@ public class SpeakerServiceImpl implements SpeakerService {
     public Page<Speaker> findSpeakerListByCondition(SpeakerCondition speakerCondition, Pageable pageable) {
         return speakerRepository.findAll(MySpec.findSpeakers(speakerCondition), pageable);
     }
+
+    @Override
+    public Boolean findSpeakerExist(Integer id) {
+        return speakerRepository.exists(id);
+    }
 }

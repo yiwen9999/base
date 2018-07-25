@@ -22,4 +22,12 @@ public interface MeetingService {
     Page<Meeting> findMeetingListByCondition(MeetingCondition meetingCondition, Pageable pageable);
 
     Meeting updateMeetingState(Integer meetingId, Integer state);
+
+    /**
+     * 根据id判断会议是否存在
+     *
+     * @param id
+     * @return
+     */
+    Boolean findMeetingExist(Integer id);
 }

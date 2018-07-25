@@ -55,4 +55,9 @@ public class MeetingServiceImpl implements MeetingService {
             return null;
         }
     }
+
+    @Override
+    public Boolean findMeetingExist(Integer id) {
+        return meetingRepository.exists(id);
+    }
 }

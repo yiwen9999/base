@@ -150,4 +150,24 @@ public class PageController {
         model.addAttribute("roleId", roleId);
         return "/role/roleChannelView";
     }
+
+    /**
+     * 跳转讲者列表
+     *
+     * @return
+     */
+    @GetMapping("/toSpeakerList")
+    public String toSpeakerList() {
+        return "/speaker/speakerList";
+    }
+
+    /**
+     * 跳转添加讲者
+     *
+     * @return
+     */
+    @GetMapping("/toSpeakerAdd")
+    public String toSpeakerAdd() {
+        return "/speaker/speakerAdd";
+    }
 }

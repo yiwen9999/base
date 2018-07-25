@@ -20,4 +20,12 @@ public interface SpeakerService {
     void deleteSpeakerById(Integer id);
 
     Page<Speaker> findSpeakerListByCondition(SpeakerCondition speakerCondition, Pageable pageable);
+
+    /**
+     * 根据id判断讲者是否存在
+     *
+     * @param id
+     * @return
+     */
+    Boolean findSpeakerExist(Integer id);
 }
