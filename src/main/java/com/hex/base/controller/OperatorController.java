@@ -9,6 +9,7 @@ import com.hex.base.service.RoleService;
 import com.hex.base.util.HexUtil;
 import com.hex.base.util.Md5SaltTool;
 import com.hex.base.util.ResultUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -136,24 +137,24 @@ public class OperatorController {
      */
     @PostMapping(value = "/saveOperator")
     public Object saveOperator(Operator operator, String roleId, HttpServletRequest request) throws Exception {
-        if (!HexUtil.validateString(roleId)) {
+        if (StringUtils.isBlank(roleId)) {
             return ResultUtil.error(ResultEnum.ERROR_NULLPARAM.getCode(), "角色" + ResultEnum.ERROR_NULLPARAM.getMsg());
         }
-        if (!HexUtil.validateString(operator.getName())) {
+        if (StringUtils.isBlank(operator.getName())) {
             return ResultUtil.error(ResultEnum.ERROR_NULLPARAM.getCode(), "登录名" + ResultEnum.ERROR_NULLPARAM.getMsg());
         }
-        if (!HexUtil.validateString(operator.getPassword())) {
+        if (StringUtils.isBlank(operator.getPassword())) {
             return ResultUtil.error(ResultEnum.ERROR_NULLPARAM.getCode(), "密码" + ResultEnum.ERROR_NULLPARAM.getMsg());
         }
         if (!operatorService.validateOperator(operator.getName(), null, null, null)) {
             return ResultUtil.error(ResultEnum.ERROR_EXIST.getCode(), "登录名" + ResultEnum.ERROR_EXIST.getMsg());
         }
-        if (HexUtil.validateString(operator.getMobile())) {
+        if (StringUtils.isNotBlank(operator.getMobile())) {
             if (!operatorService.validateOperator(null, null, operator.getMobile(), null)) {
                 return ResultUtil.error(ResultEnum.ERROR_EXIST.getCode(), "手机号" + ResultEnum.ERROR_EXIST.getMsg());
             }
         }
-        if (HexUtil.validateString(operator.getEmail())) {
+        if (StringUtils.isNotBlank(operator.getEmail())) {
             if (!operatorService.validateOperator(null, operator.getEmail(), null, null)) {
                 return ResultUtil.error(ResultEnum.ERROR_EXIST.getCode(), "邮箱" + ResultEnum.ERROR_EXIST.getMsg());
             }
@@ -181,10 +182,10 @@ public class OperatorController {
      */
     @PostMapping(value = "/updateOperator")
     public Object updateOperator(Operator operator, String roleId, HttpServletRequest request) throws Exception {
-        if (!HexUtil.validateString(roleId)) {
+        if (StringUtils.isBlank(roleId)) {
             return ResultUtil.error(ResultEnum.ERROR_NULLPARAM.getCode(), "角色" + ResultEnum.ERROR_NULLPARAM.getMsg());
         }
-        if (!HexUtil.validateString(operator.getName())) {
+        if (StringUtils.isBlank(operator.getName())) {
             return ResultUtil.error(ResultEnum.ERROR_NULLPARAM.getCode(), "登录名" + ResultEnum.ERROR_NULLPARAM.getMsg());
         }
 
@@ -196,12 +197,12 @@ public class OperatorController {
         if (!operatorService.validateOperator(operator.getName(), null, null, operator.getId())) {
             return ResultUtil.error(ResultEnum.ERROR_EXIST.getCode(), "登录名" + ResultEnum.ERROR_EXIST.getMsg());
         }
-        if (HexUtil.validateString(operator.getMobile())) {
+        if (StringUtils.isNotBlank(operator.getMobile())) {
             if (!operatorService.validateOperator(null, null, operator.getMobile(), operator.getId())) {
                 return ResultUtil.error(ResultEnum.ERROR_EXIST.getCode(), "手机号" + ResultEnum.ERROR_EXIST.getMsg());
             }
         }
-        if (HexUtil.validateString(operator.getEmail())) {
+        if (StringUtils.isNotBlank(operator.getEmail())) {
             if (!operatorService.validateOperator(null, operator.getEmail(), null, operator.getId())) {
                 return ResultUtil.error(ResultEnum.ERROR_EXIST.getCode(), "邮箱" + ResultEnum.ERROR_EXIST.getMsg());
             }
