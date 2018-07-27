@@ -34,6 +34,11 @@ public class Schedule implements Serializable {
     private Integer speakerId;
 
     /**
+     * 讲者名称
+     */
+    private String speakerName;
+
+    /**
      * 地点
      */
     private String place;
@@ -62,4 +67,5 @@ public class Schedule implements Serializable {
      * 修改时间
      */
     private Date updateTime;
+
 }

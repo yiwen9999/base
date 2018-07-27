@@ -118,6 +118,14 @@ public class MySpec {
                     predicate.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + speakerCondition.getName() + "%"));
                 }
 
+                if (!CollectionUtils.isEmpty(speakerCondition.getIdList())) {
+                    CriteriaBuilder.In<Integer> idIn = criteriaBuilder.in(root.get("id").as(Integer.class));
+                    for (Integer id : speakerCondition.getIdList()) {
+                        idIn.value(id);
+                    }
+                    predicate.add(idIn);
+                }
+
                 Predicate[] pre = new Predicate[predicate.size()];
                 return criteriaQuery.where(predicate.toArray(pre)).getRestriction();
             }
@@ -156,6 +164,26 @@ public class MySpec {
 
                 if (null != productCondition.getState()) {
                     predicate.add(criteriaBuilder.equal(root.get("state").as(Integer.class), productCondition.getState()));
+                }
+
+                Predicate[] pre = new Predicate[predicate.size()];
+                return criteriaQuery.where(predicate.toArray(pre)).getRestriction();
+            }
+        };
+    }
+
+    public static Specification<Schedule> findSchedules(ScheduleCondition scheduleCondition) {
+        return new Specification<Schedule>() {
+            @Override
+            public Predicate toPredicate(Root<Schedule> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicate = new ArrayList<>();
+
+                if (null != scheduleCondition.getMeetingId()) {
+                    predicate.add(criteriaBuilder.equal(root.get("meetingId").as(Integer.class), scheduleCondition.getMeetingId()));
+                }
+
+                if (null != scheduleCondition.getTime()) {
+                    predicate.add(criteriaBuilder.equal(root.get("time").as(Date.class), scheduleCondition.getTime()));
                 }
 
                 Predicate[] pre = new Predicate[predicate.size()];

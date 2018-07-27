@@ -167,7 +167,8 @@ public class PageController {
      * @return
      */
     @GetMapping("/toSpeakerAdd")
-    public String toSpeakerAdd() {
+    public String toSpeakerAdd(@RequestParam(required = false) Integer speakerId, Model model) {
+        model.addAttribute("speakerId", speakerId);
         return "/speaker/speakerAdd";
     }
 }

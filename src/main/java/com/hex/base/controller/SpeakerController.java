@@ -103,4 +103,14 @@ public class SpeakerController {
         }
     }
 
+    @PostMapping("/findSpeakerById")
+    public Object findSpeakerById(Integer speakerId) {
+        Speaker speaker = speakerService.findSpeakerById(speakerId);
+        if (null != speaker) {
+            return ResultUtil.success(Speaker2SpeakerVOConverter.converter(speaker));
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "讲者id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
+    }
+
 }
