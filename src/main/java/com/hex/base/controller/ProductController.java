@@ -106,4 +106,14 @@ public class ProductController {
         }
     }
 
+    @PostMapping("/findProductById")
+    public Object findProductById(Integer productId) {
+        Product product = productService.findProductById(productId);
+        if (null != product) {
+            return ResultUtil.success(Product2ProductVOConverter.converter(product));
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "商品id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
+    }
+
 }

@@ -5,6 +5,8 @@ import com.hex.base.dto.CourseCategoryCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Map;
+
 /**
  * User: hexuan
  * Date: 2018/7/11
@@ -24,4 +26,6 @@ public interface CourseCategoryService {
     Page<CourseCategory> findUsingCourseCategoryList(Pageable pageable);
 
     CourseCategory updateCourseCategoryStateById(Integer id);
+
+    Map<Integer, CourseCategory> findAllCourseCategoryMap();
 }

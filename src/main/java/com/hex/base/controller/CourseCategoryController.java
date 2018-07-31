@@ -113,4 +113,14 @@ public class CourseCategoryController {
             return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), ResultEnum.ERROR_PARAM.getMsg());
         }
     }
+
+    @PostMapping("/findCourseCategoryById")
+    public Object findCourseCategoryById(Integer courseCategoryId) {
+        CourseCategory courseCategory = courseCategoryService.findCourseCategoryById(courseCategoryId);
+        if (null != courseCategory) {
+            return ResultUtil.success(CourseCategory2CourseCategoryVOConverter.converter(courseCategory));
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "视频分类id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
+    }
 }

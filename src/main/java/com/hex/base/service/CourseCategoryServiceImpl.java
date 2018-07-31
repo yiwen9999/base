@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: hexuan
@@ -67,5 +70,15 @@ public class CourseCategoryServiceImpl implements CourseCategoryService {
             courseCategoryRepository.save(courseCategory);
         }
         return courseCategory;
+    }
+
+    @Override
+    public Map<Integer, CourseCategory> findAllCourseCategoryMap() {
+        Map<Integer, CourseCategory> courseCategoryMap = new HashMap<>();
+        List<CourseCategory> courseCategoryList = courseCategoryRepository.findAll();
+        for (CourseCategory courseCategory : courseCategoryList) {
+            courseCategoryMap.put(courseCategory.getId(), courseCategory);
+        }
+        return courseCategoryMap;
     }
 }

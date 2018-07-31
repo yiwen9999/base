@@ -9,9 +9,16 @@ import lombok.Data;
  */
 @Data
 public class CourseVO {
+
+    private Integer id;
+
     private String name;
 
     private String intro;
 
     private String videoPath;
+
+    private Integer courseCategoryId;
+
+    private String courseCategoryName;
 }

@@ -2,10 +2,12 @@ package com.hex.base.controller;
 
 import com.hex.base.converter.Course2CourseVOConverter;
 import com.hex.base.domain.Course;
+import com.hex.base.domain.CourseCategory;
 import com.hex.base.dto.CourseCondition;
 import com.hex.base.enums.ResultEnum;
 import com.hex.base.exception.MyException;
 import com.hex.base.form.CourseForm;
+import com.hex.base.service.CourseCategoryService;
 import com.hex.base.service.CourseService;
 import com.hex.base.util.HexUtil;
 import com.hex.base.util.ResultUtil;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 课程视频controller
@@ -35,6 +38,9 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private CourseCategoryService courseCategoryService;
 
     @PostMapping("/saveCourse")
     public Object saveCourse(@Valid CourseForm courseForm, BindingResult bindingResult) {
@@ -58,9 +64,11 @@ public class CourseController {
                                             @RequestParam(defaultValue = "20") Integer size,
                                             @RequestParam(defaultValue = "createTime") String sortStr,
                                             @RequestParam(defaultValue = "desc") String asc) {
+        Map<Integer, CourseCategory> courseCategoryMap = courseCategoryService.findAllCourseCategoryMap();
+
         Pageable pageable = HexUtil.getPageRequest(page, size, sortStr, asc);
         Page<Course> coursePage = courseService.findCourseListByCondition(courseCondition, pageable);
-        List<CourseVO> courseVOList = Course2CourseVOConverter.converter(coursePage.getContent());
+        List<CourseVO> courseVOList = Course2CourseVOConverter.converter(coursePage.getContent(), courseCategoryMap);
         return ResultUtil.success(new PageImpl<>(courseVOList, pageable, coursePage.getTotalElements()));
     }
 
@@ -68,5 +76,17 @@ public class CourseController {
     public Object deleteCourse(Integer courseId) {
         courseService.deleteCourseById(courseId);
         return ResultUtil.success();
+    }
+
+    @PostMapping("/findCourseById")
+    public Object findCourseById(Integer courseId) {
+        Map<Integer, CourseCategory> courseCategoryMap = courseCategoryService.findAllCourseCategoryMap();
+
+        Course course = courseService.findCourseById(courseId);
+        if (null != course) {
+            return ResultUtil.success(Course2CourseVOConverter.converter(course, courseCategoryMap));
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "视频id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
     }
 }

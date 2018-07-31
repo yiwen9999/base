@@ -162,7 +162,7 @@ public class PageController {
     }
 
     /**
-     * 跳转添加讲者
+     * 跳转讲者添加&修改
      *
      * @return
      */
@@ -170,5 +170,74 @@ public class PageController {
     public String toSpeakerAdd(@RequestParam(required = false) Integer speakerId, Model model) {
         model.addAttribute("speakerId", speakerId);
         return "/speaker/speakerAdd";
+    }
+
+    /**
+     * 跳转商品列表
+     *
+     * @return
+     */
+    @GetMapping("/toProductList")
+    public String toProductList() {
+        return "/product/productList";
+    }
+
+    /**
+     * 跳转商品添加&修改
+     *
+     * @param productId
+     * @param model
+     * @return
+     */
+    @GetMapping("/toProductAdd")
+    public String toProductAdd(@RequestParam(required = false) Integer productId, Model model) {
+        model.addAttribute("productId", productId);
+        return "/product/productAdd";
+    }
+
+    /**
+     * 跳转视频分类列表
+     *
+     * @return
+     */
+    @GetMapping("/toCourseCategoryList")
+    public String toCourseCategoryList() {
+        return "/courseCategory/courseCategoryList";
+    }
+
+    /**
+     * 跳转视频分类添加&修改
+     *
+     * @param courseCategoryId
+     * @param model
+     * @return
+     */
+    @GetMapping("/toCourseCategoryAdd")
+    public String toCourseCategoryAdd(@RequestParam(required = false) Integer courseCategoryId, Model model) {
+        model.addAttribute("courseCategoryId", courseCategoryId);
+        return "/courseCategory/courseCategoryAdd";
+    }
+
+    /**
+     * 跳转视频列表
+     *
+     * @return
+     */
+    @GetMapping("/toCourseList")
+    public String toCourseList() {
+        return "/course/courseList";
+    }
+
+    /**
+     * 跳转视频添加&修改
+     *
+     * @param courseId
+     * @param model
+     * @return
+     */
+    @GetMapping("/toCourseAdd")
+    public String toCourseAdd(@RequestParam(required = false) Integer courseId, Model model) {
+        model.addAttribute("courseId", courseId);
+        return "/course/courseAdd";
     }
 }
