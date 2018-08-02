@@ -1,0 +1,309 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>讲者列表</title>
+    <style type="text/css">
+        .page_div {
+            width: 100%;
+            text-align: right;
+        }
+
+        .page_btn {
+            border-radius: 4px;
+            border: 1px solid #e5e9ef;
+            background: #fff;
+            margin-right: 10px;
+            text-align: center;
+            width: 38px;
+            height: 38px;
+            line-height: 8px;
+            margin-top: 6px;
+            outline: 0;
+        }
+
+        .page_btn:hover {
+            border: 1px solid #4f90fb;
+            color: #4f90fb;
+        }
+    </style>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 课程管理 <span
+        class="c-gray en">&gt;</span> 课程列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+                                              href="javascript:location.replace(location.href);" title="刷新"><i
+        class="Hui-iconfont">&#xe68f;</i></a></nav>
+<article class="page-container">
+    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l"><a href="javascript:;"
+                                                               onclick="courseAdd('添加商品','/toCourseAdd','800','350')"
+                                                               class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加课程</a></span>
+        <span class="r">共有数据：<strong><span id="listNumSpan"></span></strong> 条</span></div>
+    <table class="table table-border table-bordered table-hover table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="7">课程列表</th>
+        </tr>
+        <tr class="text-c">
+            <th width="40">序号</th>
+            <th width="150">名称</th>
+            <th width="150">视频路径</th>
+            <th width="150">简介</th>
+            <th width="150">分类</th>
+            <th width="100">操作</th>
+        </tr>
+        </thead>
+        <tbody id="courseTbody">
+        </tbody>
+    </table>
+    <div class="page_div">
+        <button class="page_btn" id="prePage">上一页</button>
+        <button class="page_btn" id="btn1">1</button>
+        <span id="prePoint">...</span>
+        <button class="page_btn" id="btn2"></button>
+        <button class="page_btn" id="btn3"></button>
+        <button class="page_btn" id="btn4"></button>
+        <button class="page_btn" id="btn5"></button>
+        <button class="page_btn" id="btn6"></button>
+        <span id="sufPoint">...</span>
+        <button class="page_btn" id="btn7"></button>
+        <button class="page_btn" id="sufPage">下一页</button>
+        <div>
+            <input type="hidden" id="courseIdHidden">
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+    var SIZE = 50;//每页显示条数
+    var currentPage = 1;//当前页码
+
+    function pageCreate(currentPage, pageNum) {
+        var currentPage = currentPage || Number(1);
+        var pageNum = pageNum || Number(5);
+
+        $(".page_btn").show();
+        $(".page_div span").show();
+
+        //给每个button赋值（第一个默认为1）
+        $("#btn2").text(currentPage - 2);
+        $("#btn3").text(currentPage - 1);
+        $("#btn4").text(currentPage);
+        $("#btn5").text(currentPage + 1);
+        $("#btn6").text(currentPage + 2);
+        $("#btn7").text(pageNum);
+
+        //可改变当前页的button样式
+        $("#btn4").css("background-color", "#F19707");
+
+        //先处理"上一页"和"下一页"的情况
+        if (currentPage == 1) {//如果当前页为首页
+            $("#prePage").hide();
+        }
+        if (currentPage == pageNum) {//如果当前页为末页
+            $("#sufPage").hide();
+        }
+
+        if (currentPage <= 3) {//处理当前页小于等于3的特殊情况
+            $("#prePoint").hide();
+            $("#btn1").hide();
+        } else if (currentPage == 4) {//当前页是4还需要hide掉第一个省略号按钮（！重要）
+            $("#prePoint").hide();
+        }
+        if (currentPage == 1) {//当前页是1还需要hide掉第二第三个按钮
+            $("#btn2").hide();
+            $("#btn3").hide();
+        } else if (currentPage == 2) {//当前页是2则也需要hide掉第二个按钮（此时为-1）
+            $("#btn2").hide();
+        }
+
+        //最末端的特殊情况处理和最前端是一样的
+        if (currentPage >= pageNum - 2) {
+            $("#sufPoint").hide();
+            $("#btn7").hide();
+        } else if (currentPage == pageNum - 3) {
+            $("#sufPoint").hide();
+        }
+
+        if (currentPage == pageNum) {
+            $("#btn5").hide();
+            $("#btn6").hide();
+        }
+        if (currentPage == pageNum - 1) {
+            $("#btn6").hide();
+        }
+    }
+
+    function pageTurning() {
+        var btns = document.querySelectorAll(".page_btn");
+        btns.forEach(function (btn, index) {
+            if (btn.id === 'prePage') {//up
+                btn.onclick = function () {
+                    searchCourse(currentPage - 2);
+                };
+            } else if (btn.id === 'sufPage') {//nex
+                btn.onclick = function () {
+                    searchCourse(currentPage);
+                };
+            } else {
+                btn.onclick = function () {
+                    searchCourse(parseInt(btn.innerText) - 1);
+                };
+            }
+        });
+    }
+
+    function searchCourse(page) {
+        page = page || 0;
+        $("#courseTbody").html("");
+        $.ajax({
+            type: "POST",
+            url: "/findCourseListByCondition",
+            data: {
+                page: page,
+                size: SIZE,
+                sortStr: 'name',
+                asc: 'asc'
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    currentPage = page + 1;
+                    $.each(data.data.content, function (index, course) {
+                        addCourseTr(index, course);
+                    });
+                    pageCreate(currentPage, data.data.totalPages);
+                    $("#listNumSpan").html(data.data.totalElements);
+                } else {
+                    alert("获取信息失败");
+                }
+            }
+        });
+    }
+
+    function addCourseTr(index, course) {
+        var tr = $("<tr>").attr("class", "text-c");
+        $("#courseTbody").append(tr);
+
+        var td = $("<td>").html(index + 1);
+        tr.append(td);
+
+        td = $("<td>").html(course.name);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(course.videoPath);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(course.intro);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(course.courseCategoryName);
+        tr.append(td);
+
+        /*td=$("<td>").attr("class","td-status");
+        if(course.state==1)
+            td.append("<span class='label label-success radius'>已启用</span>");
+        else
+            td.append("<span class='label radius'>已停用</span>");
+        tr.append(td);*/
+
+        td = $("<td>").attr("class", "td-manage");
+        /*var stopA=$("<a>").css("text-decoration","none").attr("href","javascript:")
+        .click(function(){
+          updateCourseState(this,course.id);
+        });
+        var stopLi=$("<i>").attr("class","Hui-iconfont");
+        if(course.state==1){
+            stopA.attr("title","停用");
+            stopLi.html("&#xe631;&nbsp;&nbsp;");
+        }else{
+            stopA.attr("title","启用");
+            stopLi.html("&#xe615;&nbsp;&nbsp;");
+        }*/
+        var editA = $("<a>").css("text-decoration", "none").attr("href", "javascript:").attr("title", "编辑")
+            .click(function () {
+                courseEdit('课程', '/toCourseAdd?courseId=' + course.id, course.id, '800', '350');
+            });
+        var editLi = $("<i>").attr("class", "Hui-iconfont").html("&#xe6df;&nbsp;&nbsp;");
+        var deleteA = $("<a>").css("text-decoration", "none").attr("href", "javascript:").attr("title", "删除")
+            .click(function () {
+                courseDelete(this, course.id);
+            });
+        var deleteLi = $("<i>").attr("class", "Hui-iconfont").html("&#xe6e2;&nbsp;&nbsp;");
+        td.append(editA.append(editLi)).append(deleteA.append(deleteLi));
+
+        tr.append(td);
+    }
+
+    $(function () {
+        searchCourse(0);
+        pageTurning();
+    });
+
+    function courseAdd(title, url, w, h) {
+        $("#courseIdHidden").val("");
+        layer_show(title, url, w, h);
+    }
+
+    function courseEdit(title, url, id, w, h) {
+        $("#courseIdHidden").val(id);
+        layer_show(title, url, w, h);
+    }
+
+    function courseDelete(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: '/deleteCourse',
+                data: {
+                    "courseId": id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == "0") {
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!', {icon: 1, time: 1000});
+                    } else {
+                        layer.msg(data.msg, {icon: 2, time: 1000});
+                    }
+                }
+            });
+        });
+    }
+
+    function updateCourseState(obj, id) {
+        layer.confirm('确认要' + obj.title + '吗？', function (index) {
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.ajax({
+                type: 'POST',
+                url: '/updateCourseState',
+                data: {
+                    "courseId": id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == "0") {
+                        if (data.data.state == -1) {
+                            $(obj).parents("tr").find(".td-manage").prepend("<a onClick='updateCourseState(this,\"" + data.data.id + "\");' href='javascript:;' title='启用' style='text-decoration:none'><i class='Hui-iconfont'>&#xe615;&nbsp;&nbsp;</i></a>");
+                            $(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">已停用</span>');
+                            $(obj).remove();
+                            layer.msg('已停用!', {icon: 5, time: 1000});
+                        } else {
+                            $(obj).parents("tr").find(".td-manage").prepend("<a onClick='updateCourseState(this,\"" + data.data.id + "\");' href='javascript:;' title='停用' style='text-decoration:none'><i class='Hui-iconfont'>&#xe631;&nbsp;&nbsp;</i></a>");
+                            $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+                            $(obj).remove();
+                            layer.msg('已启用!', {icon: 6, time: 1000});
+                        }
+                    } else {
+                        layer.msg('停用失败', {icon: 2, time: 1000});
+                    }
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>

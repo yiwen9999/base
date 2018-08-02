@@ -1,0 +1,134 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>添加讲者</title>
+    <style>
+        #picShow img {
+            width: 100px;
+            border-radius: 10%;
+        }
+    </style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-course-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>视频路径：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="videoPath" name="videoPath">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>简介：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="intro" name="intro">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>分类：</label>
+            <div class="formControls col-xs-8 col-sm-9" id="courseCategoryDiv">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                <input type="hidden" name="id" id="courseId" value="">
+            </div>
+        </div>
+    </form>
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $.ajax({
+            type: "GET",
+            url: "/findUsingCourseCategoryList",
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    var courseCategorySelect = $("<select>", {
+                        id: "courseCategorySelect",
+                        name: 'courseCategoryId'
+                    }).attr("class", "select");
+                    courseCategorySelect.append("<option>请选择分类</option>");
+                    $.each(data.data.content, function (index, courseCategory) {
+                        courseCategorySelect.append("<option id='" + courseCategory.id + "' value='" + courseCategory.id + "'>" + courseCategory.name + "</option>");
+                    });
+                    $("#courseCategoryDiv").append(courseCategorySelect);
+                } else {
+                    layer.msg('获取信息失败', {icon: 2, time: 1000});
+                }
+            }
+        });
+        var courseIdVal = parent.document.getElementById("courseIdHidden").value;
+        if (courseIdVal) {
+            $("#courseId").val(courseIdVal);
+            $("#iconFileSpan").css("display", "none");
+            $.ajax({
+                type: "POST",
+                url: "/findCourseById",
+                data: {
+                    courseId: courseIdVal
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "0") {
+                        $("#name").val(data.data.name);
+                        $("#videoPath").val(data.data.videoPath);
+                        $("#intro").val(data.data.intro);
+                        $("#courseCategorySelect").find("#" + data.data.courseCategoryId).prop("selected", true);
+                    } else {
+                        alert("获取信息失败");
+                    }
+                }
+            });
+        }
+        $("#form-course-add").validate({
+            rules: {
+                sort: {
+                    required: true,
+                },
+                name: {
+                    required: true,
+                }
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                $(form).ajaxSubmit({
+                    type: 'post',
+                    url: "/saveCourse",
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg('操作成功!', {icon: 1, time: 1000});
+                            setTimeout("window.parent.location.reload();", 1000);
+                        } else {
+                            layer.msg(data.msg, {icon: 2, time: 2000});
+                        }
+                    },
+                    error: function (XmlHttpRequest, textStatus, errorThrown) {
+                        layer.msg('操作失败!', {icon: 2, time: 1000});
+                        setTimeout("window.parent.location.reload();", 1000);
+                    }
+                });
+            }
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

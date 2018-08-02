@@ -1,0 +1,155 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>添加讲者</title>
+    <style>
+        #picShow img {
+            width: 100px;
+            border-radius: 10%;
+        }
+    </style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-speaker-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>讲者名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">职称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="professionalTitle"
+                       name="professionalTitle">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">任职医院信息：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="hospitalInfo" name="hospitalInfo">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">简介：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="intro" name="intro">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">照片：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span class="btn-upload form-group">
+                    <input class="input-text upload-url" type="text" readonly nullmsg="请添加附件！" style="width:420px">
+                    <a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+                    <input type="file" name="photoFile" id="photoFile" class="input-file" onchange="showPreview(this)">
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">照片预览：</label>
+            <div class="formControls col-xs-8 col-sm-9" id="picShow">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                <input type="hidden" name="id" id="speakerId" value="">
+            </div>
+        </div>
+    </form>
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var speakerIdVal = parent.document.getElementById("speakerIdHidden").value;
+        if (speakerIdVal) {
+            $("#speakerId").val(speakerIdVal);
+            $.ajax({
+                type: "POST",
+                url: "/findSpeakerById",
+                data: {
+                    speakerId: speakerIdVal
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "0") {
+                        $("#name").val(data.data.name);
+                        $("#professionalTitle").val(data.data.professionalTitle);
+                        $("#hospitalInfo").val(data.data.hospitalInfo);
+                        $("#intro").val(data.data.intro);
+                        if (data.data.photo) {
+                            let img = new Image();
+                            img.src = data.data.photo;
+                            img.onload = function () {
+                                document.getElementById("picShow").appendChild(img);
+                            }
+                        }
+                    } else {
+                        alert("获取信息失败");
+                    }
+                }
+            });
+        }
+        $("#form-speaker-add").validate({
+            rules: {
+                name: {
+                    required: true,
+                }
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                if ($("#productId").val() != "") {
+                    if ($("#photoFile").val() == "")
+                        $("#photoFile").attr("name", "");
+                }
+                $(form).ajaxSubmit({
+                    type: 'post',
+                    url: "/saveSpeaker",
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg('操作成功!', {icon: 1, time: 1000});
+                            setTimeout("window.parent.location.reload();", 1000);
+                        } else {
+                            layer.msg(data.msg, {icon: 2, time: 2000});
+                        }
+                    },
+                    error: function (XmlHttpRequest, textStatus, errorThrown) {
+                        layer.msg('操作失败!', {icon: 2, time: 1000});
+                        setTimeout("window.parent.location.reload();", 1000);
+                    }
+                });
+            }
+        });
+    });
+
+    function showPreview(object) {
+        let file = object.files[0];
+        let fileCopy = new FileReader();
+        // 分析文件
+        fileCopy.readAsDataURL(file);
+        fileCopy.onload = function () {
+            if (/image/.test(this.result)) {
+                let img = new Image();
+                img.src = this.result;
+                img.onload = function () {
+                    document.getElementById("picShow").innerHTML = "";
+                    document.getElementById("picShow").appendChild(img);
+                }
+            }
+        }
+    }
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

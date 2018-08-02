@@ -21,6 +21,10 @@ spring:
       enabled: false
   resources:
       static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.upload-path}
+  http:
+      multipart:
+        max-file-size: 10Mb
+        max-request-size: 20Mb
 
 #logging:
 #  pattern:

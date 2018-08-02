@@ -1,0 +1,142 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>添加讲者</title>
+    <style>
+        #picShow img {
+            width: 100px;
+            border-radius: 10%;
+        }
+    </style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-product-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red" id="iconFileSpan">*</span>照片：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span class="btn-upload form-group">
+                    <input class="input-text upload-url" type="text" readonly nullmsg="请添加附件！" style="width:450px">
+                    <a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+                    <input type="file" name="iconFile" id="iconFile" class="input-file" onchange="showPreview(this)">
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">照片预览：</label>
+            <div class="formControls col-xs-8 col-sm-9" id="picShow">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                <input type="hidden" name="id" id="productId" value="">
+            </div>
+        </div>
+    </form>
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var productIdVal = parent.document.getElementById("productIdHidden").value;
+        if (productIdVal) {
+            $("#productId").val(productIdVal);
+            $("#iconFileSpan").css("display", "none");
+            $.ajax({
+                type: "POST",
+                url: "/findProductById",
+                data: {
+                    productId: productIdVal
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "0") {
+                        $("#name").val(data.data.name);
+                        if (data.data.icon) {
+                            let img = new Image();
+                            img.src = data.data.icon;
+                            img.onload = function () {
+                                document.getElementById("picShow").appendChild(img);
+                            }
+                        }
+                    } else {
+                        alert("获取信息失败");
+                    }
+                }
+            });
+        }
+        $("#form-product-add").validate({
+            rules: {
+                name: {
+                    required: true,
+                }
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                var isSubmit = true;
+                if ($("#productId").val() == "") {
+                    if ($("#iconFile").val() == "") {
+                        layer.msg('请先上传图片!', {icon: 2, time: 1000});
+                        isSubmit = false;
+                    }
+                } else {
+                    if ($("#iconFile").val() == "")
+                        $("#iconFile").attr("name", "");
+                }
+                if (isSubmit) {
+                    $(form).ajaxSubmit({
+                        type: 'post',
+                        url: "/saveProduct",
+                        success: function (data) {
+                            if (data.code == 0) {
+                                layer.msg('操作成功!', {icon: 1, time: 1000});
+                                setTimeout("window.parent.location.reload();", 1000);
+                            } else {
+                                layer.msg(data.msg, {icon: 2, time: 2000});
+                            }
+                        },
+                        error: function (XmlHttpRequest, textStatus, errorThrown) {
+                            layer.msg('操作失败!', {icon: 2, time: 1000});
+                            setTimeout("window.parent.location.reload();", 1000);
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+    function showPreview(object) {
+        let file = object.files[0];
+        let fileCopy = new FileReader();
+        // 分析文件
+        fileCopy.readAsDataURL(file);
+        fileCopy.onload = function () {
+            if (/image/.test(this.result)) {
+                let img = new Image();
+                img.src = this.result;
+                img.onload = function () {
+                    document.getElementById("picShow").innerHTML = "";
+                    document.getElementById("picShow").appendChild(img);
+                }
+            }
+        }
+    }
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
