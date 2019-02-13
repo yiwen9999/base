@@ -1,13 +1,21 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.Meeting;
+import com.hex.base.domain.SatelliteMeeting;
+import com.hex.base.domain.Schedule;
 import com.hex.base.dto.MeetingCondition;
 import com.hex.base.repository.MeetingRepository;
 import com.hex.base.repository.MySpec;
+import com.hex.base.repository.SatelliteMeetingRepository;
+import com.hex.base.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: hexuan
@@ -19,6 +27,12 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Autowired
     private MeetingRepository meetingRepository;
+
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+
+    @Autowired
+    private SatelliteMeetingRepository satelliteMeetingRepository;
 
     @Override
     public Meeting saveMeeting(Meeting meeting) {
@@ -36,7 +50,20 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
+    @Transactional
     public void deleteMeetingById(Integer id) {
+        List<Schedule> scheduleList = scheduleRepository.findAllByMeetingIdOrderByTimeAscSortAscCreateTimeAsc(id);
+        List<SatelliteMeeting> satelliteMeetingList = satelliteMeetingRepository.findAllByMeetingIdOrderByCreateTime(id);
+        List<String> scheduleIdList = new ArrayList<>();
+        for (Schedule schedule : scheduleList) {
+            scheduleIdList.add(schedule.getId());
+        }
+        List<Integer> satelliteMeetingIdList = new ArrayList<>();
+        for (SatelliteMeeting satelliteMeeting : satelliteMeetingList) {
+            satelliteMeetingIdList.add(satelliteMeeting.getId());
+        }
+        scheduleRepository.deleteAllByIdIn(scheduleIdList);
+        satelliteMeetingRepository.deleteAllByIdIn(satelliteMeetingIdList);
         meetingRepository.delete(id);
     }
 

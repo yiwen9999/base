@@ -15,10 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -88,6 +85,7 @@ public class CourseCategoryController {
      * @param asc
      * @return
      */
+    @CrossOrigin
     @GetMapping("/findUsingCourseCategoryList")
     public Object findUsingCourseCategoryList(@RequestParam(defaultValue = "0") Integer page,
                                               @RequestParam(defaultValue = "50") Integer size,

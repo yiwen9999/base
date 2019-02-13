@@ -1,0 +1,208 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>添加会议</title>
+    <style>
+        .imgShow {
+            width: 100px;
+            border-radius: 10%;
+        }
+    </style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-meeting-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>会议名称：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <input type="text" class="input-text" value="" placeholder="" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>地址信息：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <input type="text" class="input-text" value="" placeholder="" id="address" name="address">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>日期信息：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <input type="text" class="input-text" value="" placeholder="" id="timeStr" name="timeStr">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否抽奖：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <div class="radio-box">
+                    <input type="radio" id="haveLuckyDraw-1" value="true" name="haveLuckyDraw" checked>
+                    <label for="haveLuckyDraw-1">是</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="haveLuckyDraw-2" value="false" name="haveLuckyDraw">
+                    <label for="haveLuckyDraw-2">否</label>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>会议小贴士：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <textarea class="input-text" id="tips" name="tips" cols="" rows="" class="textarea"></textarea>
+            </div>
+        </div> -->
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">会议图片：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <span class="btn-upload form-group">
+                    <input class="input-text upload-url" type="text" readonly nullmsg="请添加附件！" style="width:420px">
+                    <a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+                    <input type="file" name="imgFile" id="imgFile" class="input-file"
+                           onchange="showPreview(this,'imgShow')">
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="formControls col-xs-8 col-sm-10 col-xs-offset-4 col-sm-offset-2" style="color:red;">
+                会议图片：jpg格式；图片尺寸：650x360或等比例。
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">图片预览：</label>
+            <div class="formControls col-xs-8 col-sm-10" id="imgShow">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">会议LOGO：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <span class="btn-upload form-group">
+                    <input class="input-text upload-url" type="text" readonly nullmsg="请添加附件！" style="width:420px">
+                    <a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+                    <input type="file" name="logoFile" id="logoFile" class="input-file"
+                           onchange="showPreview(this,'logoShow')">
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="formControls col-xs-8 col-sm-10 col-xs-offset-4 col-sm-offset-2" style="color:red;">
+                会议LOGO：jpg格式；LOGO尺寸：90x90或等比例。
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">LOGO预览：</label>
+            <div class="formControls col-xs-8 col-sm-10" id="logoShow">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-10 col-xs-offset-4 col-sm-offset-2">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                <input type="hidden" name="id" id="meetingId" value="">
+            </div>
+        </div>
+    </form>
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var meetingIdVal = parent.document.getElementById("meetingIdHidden").value;
+        if (meetingIdVal) {
+            $("#meetingId").val(meetingIdVal);
+            $.ajax({
+                type: "POST",
+                url: "/findMeetingById",
+                data: {
+                    meetingId: meetingIdVal
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "0") {
+                        $("#name").val(data.data.name);
+                        $("#address").val(data.data.address);
+                        $("#timeStr").val(data.data.timeStr);
+                        if (data.data.haveLuckyDraw && data.data.haveLuckyDraw === true)
+                            $("#haveLuckyDraw-1").prop("checked", true);
+                        else
+                            $("#haveLuckyDraw-2").prop("checked", true);
+                        //$("#tips").html(data.data.tips);
+                        if (data.data.img) {
+                            let img = new Image();
+                            img.src = data.data.img;
+                            img.className = "imgShow";
+                            img.onload = function () {
+                                document.getElementById("imgShow").appendChild(img);
+                            }
+                        }
+                        if (data.data.logo) {
+                            let img = new Image();
+                            img.src = data.data.logo;
+                            img.className = "imgShow";
+                            img.onload = function () {
+                                document.getElementById("logoShow").appendChild(img);
+                            }
+                        }
+                    } else {
+                        alert("获取信息失败");
+                    }
+                }
+            });
+        }
+        $("#form-meeting-add").validate({
+            rules: {
+                name: {
+                    required: true,
+                }
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                if ($("#imgFile").val() == "")
+                    $("#imgFile").attr("name", "");
+                if ($("#logoFile").val() == "")
+                    $("#logoFile").attr("name", "");
+                $(form).ajaxSubmit({
+                    type: 'post',
+                    url: "/saveMeeting",
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg('操作成功!', {icon: 1, time: 1000});
+                            setTimeout("window.parent.location.reload();", 1000);
+                        } else {
+                            layer.msg(data.msg, {icon: 2, time: 2000});
+                        }
+                    },
+                    error: function (XmlHttpRequest, textStatus, errorThrown) {
+                        layer.msg('操作失败!', {icon: 2, time: 1000});
+                        setTimeout("window.parent.location.reload();", 1000);
+                    }
+                });
+            }
+        });
+    });
+
+    function showPreview(object, showId) {
+        let file = object.files[0];
+        let fileCopy = new FileReader();
+        // 分析文件
+        fileCopy.readAsDataURL(file);
+        fileCopy.onload = function () {
+            if (/image/.test(this.result)) {
+                let img = new Image();
+                img.src = this.result;
+                img.className = "imgShow";
+                img.onload = function () {
+                    document.getElementById(showId).innerHTML = "";
+                    document.getElementById(showId).appendChild(img);
+                }
+            }
+        }
+    }
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

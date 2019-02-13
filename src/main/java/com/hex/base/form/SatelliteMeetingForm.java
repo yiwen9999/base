@@ -1,8 +1,9 @@
 package com.hex.base.form;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * User: hexuan
@@ -17,7 +18,7 @@ public class SatelliteMeetingForm {
     /**
      * 会议id
      */
-    @NotBlank(message = "会议id不能为空")
+    @NotNull(message = "会议id不能为空")
     private Integer meetingId;
 
     /**

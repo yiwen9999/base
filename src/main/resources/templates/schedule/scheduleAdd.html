@@ -1,0 +1,185 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>添加会议</title>
+    <style>
+        #word {
+            position: absolute;
+            z-index: 99;
+            width: 245px;
+            height: auto;
+            background-color: white;
+            border: black solid 1px;
+            display: none;
+        }
+
+        .click_work {
+            padding-bottom: 8px;
+            font-weight: lighter;
+            font-size: 13px;
+            cursor: pointer; /*鼠标放上变成小手*/
+        }
+
+        .click_work:hover {
+            color: orange;
+            background-color: gray;
+        }
+
+        .error {
+            color: gray;
+            cursor: pointer; /*鼠标放上变成小手*/
+        }
+    </style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-schedule-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>日期：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <input type="text" name="time" id="time" class="input-text Wdate" placeholder="日期" width="110px"
+                       th:value="''"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>地点：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <input type="text" class="input-text" value="" placeholder="" id="place" name="place">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>时间：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <input type="text" class="input-text" value="" placeholder="" id="timeStr" name="timeStr">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>会议内容：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <input type="text" class="input-text" value="" placeholder="" id="content" name="content">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><!-- <span class="c-red">*</span> -->讲者：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <input id="speakerText" type="text" placeholder="搜索" class="input-text" style="width:60%;"
+                       autocomplete="off">
+                <div id="word"></div>
+                <input type="hidden" name="speakerId" id="speakerIdInput" value=""/>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-10 col-xs-offset-4 col-sm-offset-2">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                <input type="hidden" name="meetingId" id="meetingId" value="">
+            </div>
+        </div>
+    </form>
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var meetingIdVal = parent.document.getElementById("meetingIdHidden").value;
+        if (meetingIdVal) {
+            $("#meetingId").val(meetingIdVal);
+            //当键盘键被松开时发送Ajax获取数据
+            $('#speakerText').keyup(function () {
+                var keywords = $(this).val();
+                if (keywords == '') {
+                    $('#word').hide();
+                    $("#speakerIdInput").val("");
+                    return
+                }
+                ;
+                $.ajax({
+                    type: 'POST',
+                    url: '/findSpeakerListByCondition',
+                    data: {
+                        page: 0,
+                        size: 15,
+                        sortStr: "name",
+                        asc: "asc",
+                        name: keywords
+                    },
+                    dataType: 'json',
+                    traditional: true,
+                    beforeSend: function () {
+                        $('#word').append('<div>正在加载。。。</div>');
+                    },
+                    success: function (data) {
+                        $('#word').empty().show();
+                        if (data.data == '') {
+                            $('#word').append('<div class="error">未找到  "' + keywords + '"</div>');
+                        }
+                        $.each(data.data.content, function (index, speaker) {
+                            $('#word').append('<div class="click_work" id="' + speaker.id + '">' + speaker.name + '</div>');
+                        })
+                    },
+                    error: function () {
+                        $('#word').empty().show();
+                        $('#word').append('<div class="click_work">失败 "' + keywords + '"</div>');
+                    }
+                })
+            });
+            //点击赋值speakerId
+            $(document).on('click', '.click_work', function () {
+                var word = $(this).text();
+                $('#speakerText').val(word);
+                $("#speakerIdInput").val($(this).attr("id"));
+                $('#word').hide();
+            });
+            $("#form-schedule-add").validate({
+                rules: {
+                    time: {
+                        required: true,
+                    },
+                    place: {
+                        required: true,
+                    },
+                    timeStr: {
+                        required: true,
+                    },
+                    content: {
+                        required: true,
+                    },
+                    /*speakerIdInput:{
+                        required:true,
+                    }*/
+                },
+                onkeyup: false,
+                focusCleanup: true,
+                success: "valid",
+                submitHandler: function (form) {
+                    $(form).ajaxSubmit({
+                        type: 'post',
+                        url: "/saveSchedule",
+                        success: function (data) {
+                            if (data.code == 0) {
+                                layer.msg('操作成功!', {icon: 1, time: 1000});
+                                setTimeout("window.parent.location.reload();", 1000);
+                            } else {
+                                layer.msg(data.msg, {icon: 2, time: 2000});
+                            }
+                        },
+                        error: function (XmlHttpRequest, textStatus, errorThrown) {
+                            layer.msg('操作失败!', {icon: 2, time: 1000});
+                            setTimeout("window.parent.location.reload();", 1000);
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

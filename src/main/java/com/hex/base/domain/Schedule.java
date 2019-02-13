@@ -1,5 +1,6 @@
 package com.hex.base.domain;
 
+import com.hex.base.util.KeyUtil;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -59,6 +60,11 @@ public class Schedule implements Serializable {
     private Date time;
 
     /**
+     * 排序号
+     */
+    private Integer sort = new Integer(1);
+
+    /**
      * 创建时间
      */
     private Date createTime;
@@ -68,4 +74,7 @@ public class Schedule implements Serializable {
      */
     private Date updateTime;
 
+    public Schedule() {
+        this.id = KeyUtil.genUniqueKey();
+    }
 }

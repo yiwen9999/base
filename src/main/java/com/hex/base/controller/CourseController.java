@@ -4,20 +4,25 @@ import com.hex.base.converter.Course2CourseVOConverter;
 import com.hex.base.domain.Course;
 import com.hex.base.domain.CourseCategory;
 import com.hex.base.dto.CourseCondition;
+import com.hex.base.enums.DefaultImgNameEnum;
 import com.hex.base.enums.ResultEnum;
 import com.hex.base.exception.MyException;
 import com.hex.base.form.CourseForm;
 import com.hex.base.service.CourseCategoryService;
 import com.hex.base.service.CourseService;
+import com.hex.base.util.FileUtil;
 import com.hex.base.util.HexUtil;
 import com.hex.base.util.ResultUtil;
 import com.hex.base.vo.CourseVO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +47,12 @@ public class CourseController {
     @Autowired
     private CourseCategoryService courseCategoryService;
 
+    @Value("${web.upload-path}")
+    private String path;
+
+    @Value("${web.zip-file-limit}")
+    private Long zipFileLimit;
+
     @PostMapping("/saveCourse")
     public Object saveCourse(@Valid CourseForm courseForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -55,9 +66,20 @@ public class CourseController {
             }
         }
         BeanUtils.copyProperties(courseForm, course);
+
+        if (null != courseForm.getVideoImgFile()) {
+            try {
+                course.setVideoImg(FileUtil.uploadImgFileNew(courseForm.getVideoImgFile(), course.getVideoImg(), DefaultImgNameEnum.VIDEO_IMG.getImgName(), path, zipFileLimit));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResultUtil.error(ResultEnum.UPLOAD_FAIL.getCode(), ResultEnum.UPLOAD_FAIL.getMsg());
+            }
+        }
+
         return ResultUtil.success(courseService.saveCourse(course).getId());
     }
 
+    @CrossOrigin
     @PostMapping("/findCourseListByCondition")
     public Object findCourseListByCondition(CourseCondition courseCondition,
                                             @RequestParam(defaultValue = "0") Integer page,
@@ -74,10 +96,19 @@ public class CourseController {
 
     @PostMapping("/deleteCourse")
     public Object deleteCourse(Integer courseId) {
-        courseService.deleteCourseById(courseId);
-        return ResultUtil.success();
+        Course course = courseService.findCourseById(courseId);
+        if (null != course) {
+            if (StringUtils.isNotBlank(course.getVideoImg()) && !course.getVideoImg().equals(DefaultImgNameEnum.VIDEO_IMG.getImgName())) {
+                FileUtil.deleteFile(path, course.getVideoImg());
+            }
+            courseService.deleteCourseById(courseId);
+            return ResultUtil.success();
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "课程id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
     }
 
+    @CrossOrigin
     @PostMapping("/findCourseById")
     public Object findCourseById(Integer courseId) {
         Map<Integer, CourseCategory> courseCategoryMap = courseCategoryService.findAllCourseCategoryMap();

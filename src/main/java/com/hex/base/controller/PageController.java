@@ -196,7 +196,7 @@ public class PageController {
     }
 
     /**
-     * 跳转视频分类列表
+     * 跳转课程分类列表
      *
      * @return
      */
@@ -206,7 +206,7 @@ public class PageController {
     }
 
     /**
-     * 跳转视频分类添加&修改
+     * 跳转课程分类添加&修改
      *
      * @param courseCategoryId
      * @param model
@@ -219,7 +219,7 @@ public class PageController {
     }
 
     /**
-     * 跳转视频列表
+     * 跳转课程列表
      *
      * @return
      */
@@ -229,7 +229,7 @@ public class PageController {
     }
 
     /**
-     * 跳转视频添加&修改
+     * 跳转课程添加&修改
      *
      * @param courseId
      * @param model
@@ -239,5 +239,133 @@ public class PageController {
     public String toCourseAdd(@RequestParam(required = false) Integer courseId, Model model) {
         model.addAttribute("courseId", courseId);
         return "/course/courseAdd";
+    }
+
+    /**
+     * 跳转会议列表
+     *
+     * @return
+     */
+    @GetMapping("/toMeetingList")
+    public String toMeetingList() {
+        return "/meeting/meetingList";
+    }
+
+    /**
+     * 跳转会议添加&修改
+     *
+     * @param meetingId
+     * @param model
+     * @return
+     */
+    @GetMapping("/toMeetingAdd")
+    public String toMeetingAdd(@RequestParam(required = false) Integer meetingId, Model model) {
+        model.addAttribute("meetingId", meetingId);
+        return "/meeting/meetingAdd";
+    }
+
+    /**
+     * 跳转会议浏览
+     *
+     * @param meetingId
+     * @param model
+     * @return
+     */
+    @GetMapping("/toMeetingView")
+    public String toMeetingView(@RequestParam Integer meetingId, Model model) {
+        model.addAttribute("meetingId", meetingId);
+        return "/meeting/meetingView";
+    }
+
+    /**
+     * 跳转日程列表
+     *
+     * @return
+     */
+    @GetMapping("/toScheduleList")
+    public String toScheduleList() {
+        return "/schedule/scheduleList";
+    }
+
+    /**
+     * 跳转日程添加
+     *
+     * @param scheduleId
+     * @param model
+     * @return
+     */
+    @GetMapping("/toScheduleAdd")
+    public String toScheduleAdd(@RequestParam(required = false) String scheduleId, Model model) {
+        model.addAttribute("scheduleId", scheduleId);
+        return "/schedule/scheduleAdd";
+    }
+
+    /**
+     * 跳转卫星会议列表
+     *
+     * @return
+     */
+    @GetMapping("/toSatelliteMeetingList")
+    public String toSatelliteMeetingList() {
+        return "/satelliteMeeting/satelliteMeetingList";
+    }
+
+    /**
+     * 跳转卫星会议添加
+     *
+     * @param satelliteMeetingId
+     * @param model
+     * @return
+     */
+    @GetMapping("/toSatelliteMeetingAdd")
+    public String toSatelliteMeetingAdd(@RequestParam(required = false) String satelliteMeetingId, Model model) {
+        model.addAttribute("satelliteMeetingId", satelliteMeetingId);
+        return "/satelliteMeeting/satelliteMeetingAdd";
+    }
+
+    /**
+     * 跳转会议小贴士更新
+     *
+     * @param meetingId
+     * @param model
+     * @return
+     */
+    @GetMapping("/toUpdateMeetingTips")
+    public String toUpdateMeetingTips(@RequestParam(required = false) String meetingId, Model model) {
+        model.addAttribute("meetingId", meetingId);
+        return "/meeting/meetingTipsUpdate";
+    }
+
+    /**
+     * 跳转用户列表
+     *
+     * @return
+     */
+    @GetMapping("/toUserInfoList")
+    public String toUserInfoList() {
+        return "/userInfo/userInfoList";
+    }
+
+    /**
+     * 跳转签到列表
+     *
+     * @return
+     */
+    @GetMapping("/toAttendanceList")
+    public String toAttendanceList() {
+        return "/attendance/attendanceList";
+    }
+
+    /**
+     * 根据会议id跳转签到列表
+     *
+     * @param meetingId
+     * @param model
+     * @return
+     */
+    @GetMapping("/toAttendanceListByMeetingId")
+    public String toAttendanceListByMeetingId(@RequestParam(required = false) String meetingId, Model model) {
+        model.addAttribute("meetingId", meetingId);
+        return "/attendance/attendanceListByMeetingId";
     }
 }

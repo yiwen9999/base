@@ -1,8 +1,10 @@
 package com.hex.base.domain;
 
+import com.hex.base.util.KeyUtil;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.io.Serializable;
@@ -28,7 +30,7 @@ public class UserInfo implements Serializable {
     private String openId;
 
     /**
-     * 昵称
+     * 微信昵称
      */
     private String nickName;
 
@@ -55,7 +57,25 @@ public class UserInfo implements Serializable {
     /**
      * 所在医院
      */
+    @Column(length = 64)
     private String hospital;
+
+    /**
+     * 地点id
+     */
+    @Column(length = 64)
+    private String placeId;
+
+    /**
+     * 地点名称
+     */
+    @Column(length = 64)
+    private String placeName;
+
+    /**
+     * 签到次数
+     */
+    private Integer attendanceTimes = new Integer(0);
 
     /**
      * 创建时间
@@ -66,4 +86,8 @@ public class UserInfo implements Serializable {
      * 修改时间
      */
     private Date updateTime;
+
+    public UserInfo() {
+        this.id = KeyUtil.genUniqueKey();
+    }
 }

@@ -1,0 +1,176 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>会议列表</title>
+</head>
+<body>
+<article class="page-container">
+    <table class="table table-border table-bordered table-hover table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="8">日程列表</th>
+        </tr>
+        <tr class="text-c">
+            <th width="40">序号</th>
+            <th width="150">日期</th>
+            <th width="50">排序号</th>
+            <th width="150">地点</th>
+            <th width="150">时间</th>
+            <th width="150">会议内容</th>
+            <th width="100">讲者</th>
+            <th width="100">操作</th>
+        </tr>
+        </thead>
+        <tbody id="scheduleTbody">
+        </tbody>
+    </table>
+    <input type="hidden" id="scheduleIdHidden">
+    <input type="hidden" id="meetingId">
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+    var SIZE = 50;//每页显示条数
+    var currentPage = 1;//当前页码
+    function searchSchedule(page) {
+        page = page || 0;
+        $("#scheduleTbody").html("");
+        $.ajax({
+            type: "POST",
+            url: "/findScheduleListViewByMeetingId",
+            data: {
+                page: page,
+                size: SIZE,
+                asc: 'asc',
+                'meetingId': $("#meetingId").val()
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    currentPage = page + 1;
+                    var numIndex = 0;
+                    $.each(data.data, function (index, timeStr) {
+                        $.each(timeStr.scheduleVOList, function (index, schedule) {
+                            addScheduleTr(numIndex++, schedule);
+                        });
+                    });
+                } else {
+                    alert("获取信息失败");
+                }
+            }
+        });
+    }
+
+    var newDate = new Date();
+
+    function addScheduleTr(index, schedule) {
+        var tr = $("<tr>").attr("class", "text-c");
+        $("#scheduleTbody").append(tr);
+
+        var td = $("<td>").html(index + 1);
+        tr.append(td);
+
+        td = $("<td>");
+        if (schedule.time != null && schedule.time != "") {
+            newDate.setTime(schedule.time);
+            td.html(Date2Str(newDate, "yyyy-MM-dd"));
+        }
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left");
+        var sortInput = $("<input type='text'>").attr("class", "input-text").blur(function () {
+            saveScheduleSort(schedule.id, this.value);
+        });
+        if (schedule.sort)
+            sortInput.val(schedule.sort);
+        tr.append(td.append(sortInput));
+
+        td = $("<td>").css("text-align", "left").html(schedule.place);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(schedule.timeStr);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(schedule.content);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(schedule.speakerName);
+        tr.append(td);
+
+        td = $("<td>").attr("class", "td-manage");
+        var deleteA = $("<a>").css("text-decoration", "none").attr("href", "javascript:").attr("title", "删除")
+            .click(function () {
+                scheduleDelete(this, schedule.id);
+            });
+        var deleteLi = $("<i>").attr("class", "Hui-iconfont").html("&#xe6e2;&nbsp;&nbsp;");
+        td.append(deleteA.append(deleteLi));
+
+        tr.append(td);
+    }
+
+    $(function () {
+        var meetingIdVal = parent.document.getElementById("meetingIdHidden").value;
+        if (meetingIdVal) {
+            $("#meetingId").val(meetingIdVal);
+            searchSchedule(0);
+        }
+    });
+
+    function scheduleDelete(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: '/deleteSchedule',
+                data: {
+                    "scheduleId": id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == "0") {
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!', {icon: 1, time: 1000});
+                    } else {
+                        layer.msg(data.msg, {icon: 2, time: 1000});
+                    }
+                }
+            });
+        });
+    }
+
+    function saveScheduleSort(id, sort) {
+        $.ajax({
+            type: 'POST',
+            url: '/updateScheduleSort',
+            data: {
+                "scheduleId": id,
+                "sort": sort
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.code == "0") {
+                    layer.msg('修改成功', {icon: 1, time: 1000});
+                } else {
+                    layer.msg(data.msg, {icon: 2, time: 1000});
+                }
+            }
+        });
+    }
+
+    function Date2Str(x, y) {
+        var z = {M: x.getMonth() + 1, d: x.getDate(), h: x.getHours(), m: x.getMinutes(), s: x.getSeconds()};
+        y = y.replace(/(M+|d+|h+|m+|s+)/g, function (v) {
+            return ((v.length > 1 ? "0" : "") + eval('z.' + v.slice(-1))).slice(-2)
+        });
+        return y.replace(/(y+)/g, function (v) {
+            return x.getFullYear().toString().slice(-v.length)
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,13 +1,20 @@
 package com.hex.base.service;
 
+import com.hex.base.converter.Speaker2SpeakerVOConverter;
+import com.hex.base.domain.Schedule;
 import com.hex.base.domain.Speaker;
 import com.hex.base.dto.SpeakerCondition;
 import com.hex.base.repository.MySpec;
+import com.hex.base.repository.ScheduleRepository;
 import com.hex.base.repository.SpeakerRepository;
+import com.hex.base.vo.SpeakerVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: hexuan
@@ -19,6 +26,9 @@ public class SpeakerServiceImpl implements SpeakerService {
 
     @Autowired
     private SpeakerRepository speakerRepository;
+
+    @Autowired
+    private ScheduleRepository scheduleRepository;
 
     @Override
     public Speaker saveSpeaker(Speaker speaker) {
@@ -48,5 +58,17 @@ public class SpeakerServiceImpl implements SpeakerService {
     @Override
     public Boolean findSpeakerExist(Integer id) {
         return speakerRepository.exists(id);
+    }
+
+    @Override
+    public List<SpeakerVO> findSpeakerVOListByMeetingId(Integer meetingId) {
+        List<Schedule> scheduleList = scheduleRepository.findAllByMeetingIdOrderByTimeAscSortAscCreateTimeAsc(meetingId);
+        List<Integer> speakerIdList = new ArrayList<>();
+        for (Schedule schedule : scheduleList) {
+            if (null != schedule.getSpeakerId())
+                speakerIdList.add(schedule.getSpeakerId());
+        }
+        List<Speaker> speakerList = speakerRepository.findSpeakersByIdInOrderById(speakerIdList);
+        return Speaker2SpeakerVOConverter.converter(speakerList);
     }
 }

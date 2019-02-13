@@ -25,7 +25,7 @@ public class ScheduleForm {
     /**
      * 讲者id
      */
-    @NotNull(message = "讲者id不能为空")
+//    @NotNull(message = "讲者id不能为空")
     private Integer speakerId;
 
     /**
@@ -48,4 +48,11 @@ public class ScheduleForm {
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date time;
+
+//    /**
+//     * 排序号
+//     */
+//    @Min(value = 1,message = "排序号不能小于1")
+//    @NotNull(message = "排序号不能为空")
+//    private Integer sort;
 }

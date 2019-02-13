@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -108,6 +109,16 @@ public class SpeakerController {
         Speaker speaker = speakerService.findSpeakerById(speakerId);
         if (null != speaker) {
             return ResultUtil.success(Speaker2SpeakerVOConverter.converter(speaker));
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "讲者id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
+    }
+
+    @CrossOrigin
+    @PostMapping("/findSpeakerListByMeetingId")
+    public Object findSpeakerListByMeetingId(Integer meetingId) {
+        if (null != meetingId) {
+            return ResultUtil.success(speakerService.findSpeakerVOListByMeetingId(meetingId));
         } else {
             return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "讲者id " + ResultEnum.ERROR_PARAM.getMsg());
         }

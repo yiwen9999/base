@@ -2,7 +2,6 @@ package com.hex.base.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -41,7 +40,7 @@ public class HttpAspect {
         // 类方法
         log.info("* class_method={}", joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
         // 参数
-        log.info("* args={}", joinPoint.getArgs());
+//        log.info("* args={}", joinPoint.getArgs());
         log.info("");
     }
 
@@ -50,10 +49,10 @@ public class HttpAspect {
 //        logger.info("2222222222");
 //    }
 
-    @AfterReturning(returning = "object", pointcut = "log()")
-    public void doAfterReturning(Object object) {
-        log.info("");
-        log.info("* response={}", object.toString());
-        log.info("");
-    }
+//    @AfterReturning(returning = "object", pointcut = "log()")
+//    public void doAfterReturning(Object object) {
+//        log.info("");
+//        log.info("* response={}", object.toString());
+//        log.info("");
+//    }
 }

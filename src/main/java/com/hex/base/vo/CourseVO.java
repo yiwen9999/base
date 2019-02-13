@@ -14,9 +14,13 @@ public class CourseVO {
 
     private String name;
 
+    private String subtitle;
+
     private String intro;
 
     private String videoPath;
+
+    private String videoImg;
 
     private Integer courseCategoryId;
 

@@ -1,0 +1,105 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>添加会议</title>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-meeting-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">会议名称：</label>
+            <div class="formControls col-xs-8 col-sm-10" id="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>小贴士：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <textarea class="input-text" id="tips" name="tips" cols="" rows="" class="textarea"></textarea>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-10 col-xs-offset-4 col-sm-offset-2">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                <input type="hidden" name="meetingId" id="meetingId" value="">
+            </div>
+        </div>
+    </form>
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="/kindeditor/kindeditor-all.js"></script>
+<script type="text/javascript" src="/kindeditor/lang/zh-CN.js"></script>
+<script type="text/javascript">
+    $(function () {
+        KindEditor.ready(function (K) {
+            window.editor = K.create('#tips', {
+                width: '80%',
+                height: '300px',
+                uploadJson: '/fileUpload',
+                fileManagerJson: '/fileManager',
+                allowFileManager: true,
+                urlType: "domain",
+            });
+        });
+        var meetingIdVal = parent.document.getElementById("meetingIdHidden").value;
+        if (meetingIdVal) {
+            $("#meetingId").val(meetingIdVal);
+            $.ajax({
+                type: "POST",
+                url: "/findMeetingById",
+                data: {
+                    meetingId: meetingIdVal
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "0") {
+                        $("#name").html(data.data.name);
+                        $("#tips").html(data.data.tips);
+                        editor.html(data.data.tips);
+                    } else {
+                        alert("获取信息失败");
+                    }
+                }
+            });
+        }
+        $("#form-meeting-add").validate({
+            rules: {
+                name: {
+                    required: true,
+                }
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                editor.sync();
+                $(form).ajaxSubmit({
+                    type: 'post',
+                    url: "/updateMeetingTips",
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg('操作成功!', {icon: 1, time: 1000});
+                            setTimeout("window.parent.location.reload();", 1000);
+                        } else {
+                            layer.msg(data.msg, {icon: 2, time: 2000});
+                        }
+                    },
+                    error: function (XmlHttpRequest, textStatus, errorThrown) {
+                        layer.msg('操作失败!', {icon: 2, time: 1000});
+                        setTimeout("window.parent.location.reload();", 1000);
+                    }
+                });
+            }
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

@@ -4,6 +4,8 @@ import com.hex.base.domain.Place;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * User: hexuan
  * Date: 2018/7/12
@@ -17,4 +19,8 @@ public interface PlaceService {
     Page<Place> findAllPlaceList(Pageable pageable);
 
     void deletePlaceById(String id);
+
+    List<Place> findTopLevelPlaceList();
+
+    List<Place> findSecondLevelPlaceList();
 }

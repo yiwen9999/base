@@ -2,8 +2,11 @@ package com.hex.base.service;
 
 import com.hex.base.domain.Speaker;
 import com.hex.base.dto.SpeakerCondition;
+import com.hex.base.vo.SpeakerVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 /**
  * User: hexuan
@@ -28,4 +31,6 @@ public interface SpeakerService {
      * @return
      */
     Boolean findSpeakerExist(Integer id);
+
+    List<SpeakerVO> findSpeakerVOListByMeetingId(Integer meetingId);
 }

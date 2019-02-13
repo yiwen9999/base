@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,6 +71,7 @@ public class ProductController {
         return ResultUtil.success(productService.saveProduct(product).getId());
     }
 
+    @CrossOrigin
     @PostMapping("/findProductListByCondition")
     public Object findProductListByCondition(ProductCondition productCondition,
                                              @RequestParam(defaultValue = "0") Integer page,

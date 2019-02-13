@@ -32,10 +32,15 @@ public class MeetingForm {
     @NotBlank(message = "会议时间信息不能为空")
     private String timeStr;
 
+//    /**
+//     * 会议小贴士
+//     */
+//    private String tips;
+
     /**
-     * 会议小贴士
+     * 是否含抽奖
      */
-    private String tips;
+    private Boolean haveLuckyDraw;
 
     /**
      * 会议图片文件

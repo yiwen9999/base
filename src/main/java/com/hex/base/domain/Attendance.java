@@ -1,5 +1,6 @@
 package com.hex.base.domain;
 
+import com.hex.base.util.KeyUtil;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -29,9 +30,19 @@ public class Attendance implements Serializable {
     private Integer meetingId;
 
     /**
+     * 会议名称
+     */
+    private String meetingName;
+
+    /**
      * 商品id
      */
     private Integer productId;
+
+    /**
+     * 商品名称
+     */
+    private String productName;
 
     /**
      * 地点id
@@ -39,9 +50,19 @@ public class Attendance implements Serializable {
     private String placeId;
 
     /**
+     * 地点名称
+     */
+    private String placeName;
+
+    /**
      * 用户信息id
      */
     private String userInfoId;
+
+    /**
+     * 微信昵称
+     */
+    private String nickName;
 
     /**
      * 姓名
@@ -59,6 +80,11 @@ public class Attendance implements Serializable {
     private String hospital;
 
     /**
+     * 是否中奖
+     */
+    private Boolean winningRecord;
+
+    /**
      * 创建时间
      */
     private Date createTime;
@@ -67,4 +93,8 @@ public class Attendance implements Serializable {
      * 修改时间
      */
     private Date updateTime;
+
+    public Attendance() {
+        this.id = KeyUtil.genUniqueKey();
+    }
 }

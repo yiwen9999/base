@@ -1,7 +1,7 @@
 web:
   upload-path: /Users/hexuan/Desktop/develop/upload_file_beauty/
   url: http://127.0.0.1:8080/index
-  zip-file-limit: 1000000
+  zip-file-limit: 200000
 
 spring:
   datasource:
@@ -15,7 +15,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
   mvc:
     favicon:
       enabled: false
@@ -23,8 +23,12 @@ spring:
       static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.upload-path}
   http:
       multipart:
-        max-file-size: 10Mb
+        max-file-size: 2Mb
         max-request-size: 20Mb
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
 
 #logging:
 #  pattern:

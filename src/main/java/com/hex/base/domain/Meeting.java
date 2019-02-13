@@ -64,6 +64,11 @@ public class Meeting implements Serializable {
     private Integer state = MeetingStateEnum.NOT_START.getCode();
 
     /**
+     * 是否含抽奖
+     */
+    private Boolean haveLuckyDraw = new Boolean(false);
+
+    /**
      * 创建时间
      */
     private Date createTime;

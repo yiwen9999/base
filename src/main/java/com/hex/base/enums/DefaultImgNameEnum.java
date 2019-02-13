@@ -6,7 +6,8 @@ public enum DefaultImgNameEnum {
     MEETING_LOGO("default_meeting_logo.jpg"),
     PRODUCT_ICON("default_product_icon.jpg"),
     SATELLITE_MEETING_IMG("default_satelliteMeeting_img.jpg"),
-    SPEAKER_PHOTO("default_speaker_photo.jpg"),;
+    SPEAKER_PHOTO("default_speaker_photo.jpg"),
+    VIDEO_IMG("default_video_img.jpg"),;
 
     private String imgName;
 

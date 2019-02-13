@@ -1,8 +1,12 @@
 package com.hex.base.service;
 
 import com.hex.base.domain.UserInfo;
+import com.hex.base.dto.UserInfoCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import java.util.List;
 
 /**
  * User: hexuan
@@ -17,4 +21,10 @@ public interface UserInfoService {
     Page<UserInfo> findAllUserInfoList(Pageable pageable);
 
     void deleteUserInfoById(String id);
+
+    UserInfo findUserInfoByPhone(String phone);
+
+    Page<UserInfo> findUserInfoListByCondition(UserInfoCondition userInfoCondition, Pageable pageable);
+
+    List<UserInfo> findAllUserInfoList(Sort sort);
 }

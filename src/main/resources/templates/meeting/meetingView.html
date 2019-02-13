@@ -1,0 +1,465 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>会议列表</title>
+    <style type="text/css">
+        body, ul, li, p {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        #box {
+            width: 100%;
+        }
+
+        .bannerDiv {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            border: 1px solid #3bb4f2;
+            position: relative;
+        }
+
+        .bannerDiv div {
+            position: absolute;
+        }
+
+        .bannerDiv > .imgDiv,
+        .bannerDiv > .imgDiv > img {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .bannerDiv > .logoDiv {
+            width: 100px;
+            height: 100px;
+            left: 50px;
+            top: 50%;
+            margin-top: -50px;
+        }
+
+        .bannerDiv .logoDiv img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .bannerDiv .meetingInfoDiv {
+            width: 60%;
+            height: 150px;
+            left: 160px;
+            top: 50%;
+            margin-top: -50px;
+            text-align: left;
+        }
+
+        .bannerDiv .meetingInfoDiv > p {
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .bannerDiv .meetingInfoDiv > p:nth-child(1) {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        /*--小贴士--*/
+        .tips {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            min-height: 150px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            background-color: transparent;
+            font-size: 14px;
+        }
+
+        /*--讲者信息--*/
+        .speaker {
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .speaker .speaker-item {
+            width: 90%;
+            min-height: 150px;
+            margin-left: 10px;
+            padding-top: 10px;
+        }
+
+        .speaker .speaker-item + .speaker-item {
+            border-top: 1px solid #6641e2;
+        }
+
+        .speaker .speaker-item .base-info > img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            float: left;
+        }
+
+        .speaker .speaker-item .base-info > div {
+            float: left;
+            width: 70%;
+            margin-left: 10px;
+        }
+
+        .base-info > div .speaker-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .base-info > div .speaker-professional {
+            font-size: 14px;
+        }
+
+        .base-info > div > p:nth-child(2) {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /*--卫星会--*/
+        .satellite-meeting {
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .satellite-meeting > div {
+            padding: 10px 0;
+        }
+
+        .satellite-meeting > div + div {
+            border-top: 1px solid #6641e2;
+        }
+
+        .satellite-meeting i {
+            position: absolute;
+            top: -20px;
+            right: -10px;
+            cursor: pointer;
+        }
+
+        .imgDiv {
+            height: 200px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .imgDiv img {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .infoDiv > p:first-of-type {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .infoDiv > .info-content {
+            width: 100%;
+            min-height: 200px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+        }
+
+        .info-content img {
+            width: 100%;
+        }
+
+        /*--大会总日程--*/
+        .schedule {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .schedule .header {
+            font-size: 0;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+
+        .header span {
+            display: inline-block;
+            background-color: #795da3;
+            padding: 5px 20px;
+            font-size: 14px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .header span.on {
+            background-color: #aaa;
+            color: #fff;
+        }
+
+        .schedule .schedule-content {
+            position: relative;
+            height: 200px;
+            max-height: 200px;
+            overflow: auto;
+        }
+
+        .schedule-content ul {
+            position: absolute;
+            display: none;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .schedule-content ul.onclick {
+            display: block;
+        }
+
+        .schedule-content ul li {
+            padding: 4px 0 4px 5px;
+            border-bottom: 1px dashed #aaa;
+            text-indent: 12px;
+        }
+
+        .schedule-content li .name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .schedule-content li p:nth-of-type(1) {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .schedule-content li p:nth-of-type(2) {
+            font-size: 14px;
+        }
+
+        /*--清除浮动--*/
+        .clearfix:after {
+            display: block;
+            content: '';
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+<article class="page-container">
+    <div id="box">
+        <div class="bannerDiv">
+            <div class="imgDiv">
+
+            </div>
+            <div class="logoDiv">
+
+            </div>
+            <div class="meetingInfoDiv">
+                <p class="meetingName"></p>
+                <p class="address"></p>
+                <p class="timeStr"></p>
+            </div>
+        </div>
+        <div class="btn btn-secondary-outline btn-block radius">
+            大会总日程表
+        </div>
+        <div class="schedule" style="display: none;">
+            <!--<div class="header">
+              <span class="on">热门排行</span>
+            </div>
+            <div class="schedule-content">
+              <ul class="onclick">
+                <li><span class="name">和弦</span><p>2017年夏季 美容用品博览会</p><p><span>307会场</span><span>&nbsp;&nbsp;&nbsp;&nbsp;5月12日 10:25-10:45</span></p></li>
+                <li><span class="name">和弦</span><p>2017年夏季 美容用品博览会</p><p><span>307会场</span><span>&nbsp;&nbsp;&nbsp;&nbsp;5月12日 10:25-10:45</span></p></li>
+                <li><span class="name">和弦</span><p>2017年夏季 美容用品博览会</p><p><span>307会场</span><span>&nbsp;&nbsp;&nbsp;&nbsp;5月12日 10:25-10:45</span></p></li>
+                <li><span class="name">和弦</span><p>2017年夏季 美容用品博览会</p><p><span>307会场</span><span>&nbsp;&nbsp;&nbsp;&nbsp;5月12日 10:25-10:45</span></p></li>
+                <li><span class="name">和弦</span><p>2017年夏季 美容用品博览会</p><p><span>307会场</span><span>&nbsp;&nbsp;&nbsp;&nbsp;5月12日 10:25-10:45</span></p></li>
+                <li><span class="name">和弦</span><p>2017年夏季 美容用品博览会</p><p><span>307会场</span><span>&nbsp;&nbsp;&nbsp;&nbsp;5月12日 10:25-10:45</span></p></li>
+              </ul>
+            </div>-->
+        </div>
+        <div class="btn btn-secondary-outline btn-block radius">
+            特邀讲者信息
+        </div>
+        <div class="speaker" style="display: none;">
+        </div>
+        <div class="btn btn-secondary-outline btn-block radius">
+            卫星会信息
+        </div>
+        <div class="satellite-meeting" style="display: none;">
+        </div>
+        <div class="btn btn-secondary-outline btn-block radius">
+            会议小贴士
+        </div>
+        <div class="tips" style="display: none;">
+        </div>
+    </div>
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var meetingIdVal = parent.document.getElementById("meetingIdHidden").value;
+        if (meetingIdVal) {
+            $("#meetingId").val(meetingIdVal);
+            $.ajax({
+                type: "POST",
+                url: "/findMeetingById",
+                data: {
+                    meetingId: meetingIdVal
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "0") {
+                        $(".meetingName").first().html(data.data.name);
+                        $(".address").first().html(data.data.address);
+                        $(".timeStr").first().html(data.data.timeStr);
+                        $(".tips").first().html(data.data.tips);
+                        if (data.data.img) {
+                            let img = new Image();
+                            img.src = data.data.img;
+                            img.onload = function () {
+                                $(".imgDiv").first().append(img);
+                            }
+                        }
+                        if (data.data.logo) {
+                            let img = new Image();
+                            img.src = data.data.logo;
+                            img.onload = function () {
+                                $(".logoDiv").first().append(img);
+                            }
+                        }
+                    } else {
+                        alert("获取信息失败");
+                    }
+                }
+            });
+            getSatelliteMeeting(meetingIdVal);
+            getSpeaker(meetingIdVal);
+            getSchedule(meetingIdVal);
+        }
+        var btns = $("#box").find(".btn.btn-secondary-outline.btn-block.radius");
+        $.each(btns, function (index, btn) {
+            $(btn).click(function () {
+                showDetail(index);
+            });
+        });
+    });
+
+    function getSpeaker(meetingIdVal) {
+        $.ajax({
+            type: "POST",
+            url: "/findSpeakerListByMeetingId",
+            data: {
+                meetingId: meetingIdVal
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    $.each(data.data, function (index, speaker) {
+                        var speakerItem = $("<div>").attr("class", "speaker-item");
+                        var baseInfo = $("<div>").attr("class", "base-info clearfix").html("<img src='/" + speaker.photo + "' alt='" + speaker.name + "'/><div><p><span class='speaker-name'>" + speaker.name + "</span><span class='speaker-professional'>&nbsp;&nbsp;&nbsp;&nbsp;" + speaker.professionalTitle + "</span></p><p>" + speaker.hospitalInfo + "</p></div>");
+                        var baseDes = $("<p>").html(speaker.intro);
+                        $(".speaker").first().append(speakerItem.append(speakerItem.append(baseInfo)).append(baseDes));
+                    });
+                } else {
+                    alert("获取信息失败");
+                }
+            }
+        });
+    }
+
+    function getSatelliteMeeting(meetingIdVal) {
+        $.ajax({
+            type: "POST",
+            url: "/findSatelliteMeetingListByMeetingId",
+            data: {
+                meetingId: meetingIdVal
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    $.each(data.data, function (index, satelliteMeeting) {
+                        var boxDiv = $("<div>");
+                        boxDiv.append("<div class='imgDiv'><img src='" + satelliteMeeting.img + "'/></div> <div class='infoDiv'><p>会议信息：</p><div class='info-content'>" + satelliteMeeting.info + "</div></div>");
+                        $(".satellite-meeting").first().append(boxDiv);
+                    });
+                } else {
+                    alert("获取信息失败");
+                }
+            }
+        });
+    }
+
+    function getSchedule(meetingIdVal) {
+        $.ajax({
+            type: "POST",
+            url: "/findScheduleListViewByMeetingId",
+            data: {
+                meetingId: meetingIdVal
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    var header = $("<div class='header'></div>"),
+                        scheduleContent = $("<div class='schedule-content'></div>");
+                    $.each(data.data, function (index, object) {
+                        if (index == 0)
+                            header.append("<span class='on'>" + object.timeStr + "</span>");
+                        else
+                            header.append("<span>" + object.timeStr + "</span>");
+                        if (object.scheduleVOList && object.scheduleVOList.length > 0) {
+                            var ul = $("<ul></ul>");
+                            if (index == 0)
+                                ul.attr("class", "onclick");
+                            $.each(object.scheduleVOList, function (index, schedule) {
+                                ul.append("<li><span class='name'>" + schedule.speakerName + "</span><p>" + schedule.content + "</p><p><span>" + schedule.place + "</span><span>&nbsp;&nbsp;&nbsp;&nbsp;" + schedule.timeStr + "</span></p></li>");
+                            });
+                            scheduleContent.append(ul)
+                        }
+                    });
+                    $(".schedule").first().append(header).append(scheduleContent);
+                    var aSpan = $(".schedule").first().find(".header span"),
+                        aUl = $(".schedule").first().find("ul"),
+                        length = aSpan.length,
+                        timeIndex = 0;
+                    for (var i = 0; i < length; i++) {
+                        aSpan[i].index = i;
+                        aSpan[i].onmouseover = function () {
+                            aSpan[timeIndex].className = "";
+                            aUl[timeIndex].className = "";
+                            timeIndex = this.index;//这里的this.timeIndex是移入的span的下标
+                            aSpan[timeIndex].className = "on";
+                            aUl[timeIndex].className = "onclick";
+                        }
+                    }
+                } else {
+                    alert("获取信息失败");
+                }
+            }
+        });
+    }
+
+    function showDetail(index) {
+        var typeArr = ["schedule", "speaker", "satellite-meeting", "tips"];
+        if ($("." + typeArr[index])) {
+            $("." + typeArr[index]).first().toggle();
+        }
+    }
+</script>
+</body>
+</html>

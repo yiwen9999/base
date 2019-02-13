@@ -38,4 +38,9 @@ public class ScheduleVO {
      * 日期
      */
     private Date time;
+
+    /**
+     * 排序号
+     */
+    private Integer sort;
 }

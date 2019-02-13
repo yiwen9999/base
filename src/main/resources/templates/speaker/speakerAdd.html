@@ -14,33 +14,33 @@
 <article class="page-container">
     <form class="form form-horizontal" id="form-speaker-add">
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>讲者名称：</label>
-            <div class="formControls col-xs-8 col-sm-9">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>讲者名称：</label>
+            <div class="formControls col-xs-8 col-sm-10">
                 <input type="text" class="input-text" value="" placeholder="" id="name" name="name">
             </div>
         </div>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3">职称：</label>
-            <div class="formControls col-xs-8 col-sm-9">
+            <label class="form-label col-xs-4 col-sm-2">职称：</label>
+            <div class="formControls col-xs-8 col-sm-10">
                 <input type="text" class="input-text" value="" placeholder="" id="professionalTitle"
                        name="professionalTitle">
             </div>
         </div>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3">任职医院信息：</label>
-            <div class="formControls col-xs-8 col-sm-9">
+            <label class="form-label col-xs-4 col-sm-2">任职医院信息：</label>
+            <div class="formControls col-xs-8 col-sm-10">
                 <input type="text" class="input-text" value="" placeholder="" id="hospitalInfo" name="hospitalInfo">
             </div>
         </div>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3">简介：</label>
-            <div class="formControls col-xs-8 col-sm-9">
+            <label class="form-label col-xs-4 col-sm-2">简介：</label>
+            <div class="formControls col-xs-8 col-sm-10">
                 <input type="text" class="input-text" value="" placeholder="" id="intro" name="intro">
             </div>
         </div>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3">照片：</label>
-            <div class="formControls col-xs-8 col-sm-9">
+            <label class="form-label col-xs-4 col-sm-2">照片：</label>
+            <div class="formControls col-xs-8 col-sm-10">
                 <span class="btn-upload form-group">
                     <input class="input-text upload-url" type="text" readonly nullmsg="请添加附件！" style="width:420px">
                     <a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
@@ -49,12 +49,17 @@
             </div>
         </div>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3">照片预览：</label>
-            <div class="formControls col-xs-8 col-sm-9" id="picShow">
+            <div class="formControls col-xs-8 col-sm-10 col-xs-offset-4 col-sm-offset-2" style="color:red;">
+                照片：jpg格式；照片尺寸：100x100或等比例。
             </div>
         </div>
         <div class="row cl">
-            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+            <label class="form-label col-xs-4 col-sm-2">照片预览：</label>
+            <div class="formControls col-xs-8 col-sm-10" id="picShow">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-10 col-xs-offset-4 col-sm-offset-2">
                 <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
                 <input type="hidden" name="id" id="speakerId" value="">
             </div>
@@ -109,7 +114,7 @@
             focusCleanup: true,
             success: "valid",
             submitHandler: function (form) {
-                if ($("#productId").val() != "") {
+                if ($("#speakerId").val() != "") {
                     if ($("#photoFile").val() == "")
                         $("#photoFile").attr("name", "");
                 }

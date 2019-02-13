@@ -1,0 +1,128 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>卫星会列表</title>
+    <style type="text/css">
+        div, p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .box {
+            width: 80%;
+            border-radius: 3px;
+            box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.15), 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
+            border: 1px solid rgba(165, 170, 184, 0.10);
+            background: #FFFFFF;
+            margin: 15px auto;
+            padding: 10px;
+            transition: box-shadow 0.2s;
+            -webkit-transition: box-shadow 0.2s;
+            position: relative;
+        }
+
+        .box i {
+            position: absolute;
+            top: -20px;
+            right: -10px;
+            cursor: pointer;
+        }
+
+        .imgDiv {
+            height: 200px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .imgDiv img {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .infoDiv > p:first-of-type {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .infoDiv > .info-content {
+            width: 100%;
+            min-height: 200px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+        }
+
+        .info-content img {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<article class="page-container">
+    <div id="container">
+    </div>
+    <input type="hidden" id="meetingIdHidden">
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var meetingIdVal = parent.document.getElementById("meetingIdHidden").value;
+        if (meetingIdVal) {
+            $("#meetingId").val(meetingIdVal);
+            $.ajax({
+                type: "POST",
+                url: "/findSatelliteMeetingListByMeetingId",
+                data: {
+                    meetingId: meetingIdVal
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "0") {
+                        $.each(data.data, function (index, satelliteMeeting) {
+                            var boxDiv = $("<div class='box'></div>");
+                            var iTag = $("<i class='Hui-iconfont'>&#xe6e2;</i>").click(function () {
+                                satelliteMeetingDelete(this, satelliteMeeting.id);
+                            });
+                            boxDiv.append(iTag).append("<div class='imgDiv'><img src='" + satelliteMeeting.img + "'/></div> <div class='infoDiv'><p>会议信息：</p><div class='info-content'>" + satelliteMeeting.info + "</div></div>");
+                            $("#container").append(boxDiv);
+
+                        });
+                    } else {
+                        alert("获取信息失败");
+                    }
+                }
+            });
+        }
+    });
+
+    function satelliteMeetingDelete(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: '/deleteSatelliteMeeting',
+                data: {
+                    "satelliteMeetingId": id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == "0") {
+                        $(obj).parent().remove();
+                        layer.msg('已删除!', {icon: 1, time: 1000});
+                    } else {
+                        layer.msg(data.msg, {icon: 2, time: 1000});
+                    }
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>

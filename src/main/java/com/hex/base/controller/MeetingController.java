@@ -1,9 +1,11 @@
 package com.hex.base.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hex.base.converter.Meeting2MeetingVOConverter;
 import com.hex.base.domain.Meeting;
 import com.hex.base.dto.MeetingCondition;
 import com.hex.base.enums.DefaultImgNameEnum;
+import com.hex.base.enums.MeetingStateEnum;
 import com.hex.base.enums.ResultEnum;
 import com.hex.base.exception.MyException;
 import com.hex.base.form.MeetingForm;
@@ -20,11 +22,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ import java.util.List;
  * Date: 2018/7/13
  * Time: 上午10:17
  */
+@CrossOrigin
 @RestController
 public class MeetingController {
 
@@ -114,6 +116,39 @@ public class MeetingController {
         Meeting meeting = meetingService.updateMeetingState(meetingId, state);
         if (null != meeting) {
             return ResultUtil.success(Meeting2MeetingVOConverter.converter(meeting));
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "会议id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
+    }
+
+    @PostMapping("/findMeetingById")
+    public Object findMeetingById(Integer meetingId) {
+        Meeting meeting = meetingService.findMeetingById(meetingId);
+        if (null != meeting) {
+            return ResultUtil.success(Meeting2MeetingVOConverter.converter(meeting));
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "会议id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
+    }
+
+    @GetMapping("/getMeetingStateList")
+    public Object getMeetingStateList() {
+        List<JSONObject> jsonObjectList = new ArrayList<>();
+        for (int i = 0; i < MeetingStateEnum.values().length; i++) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name", MeetingStateEnum.values()[i].getMsg());
+            jsonObject.put("code", MeetingStateEnum.values()[i].getCode());
+            jsonObjectList.add(jsonObject);
+        }
+        return ResultUtil.success(jsonObjectList);
+    }
+
+    @PostMapping("/updateMeetingTips")
+    public Object updateMeetingTips(Integer meetingId, String tips) {
+        Meeting meeting = meetingService.findMeetingById(meetingId);
+        if (null != meeting) {
+            meeting.setTips(tips);
+            return ResultUtil.success(Meeting2MeetingVOConverter.converter(meetingService.saveMeeting(meeting)));
         } else {
             return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "会议id " + ResultEnum.ERROR_PARAM.getMsg());
         }

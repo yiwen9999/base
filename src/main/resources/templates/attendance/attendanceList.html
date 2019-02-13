@@ -1,0 +1,154 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>签到列表</title>
+    <style type="text/css">
+        .page_div {
+            width: 100%;
+            text-align: right;
+        }
+
+        .page_btn {
+            border-radius: 4px;
+            border: 1px solid #e5e9ef;
+            background: #fff;
+            margin-right: 10px;
+            text-align: center;
+            width: 38px;
+            height: 38px;
+            line-height: 8px;
+            margin-top: 6px;
+            outline: 0;
+        }
+
+        .page_btn:hover {
+            border: 1px solid #4f90fb;
+            color: #4f90fb;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 签到管理 <span
+        class="c-gray en">&gt;</span> 签到列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+                                              href="javascript:location.replace(location.href);" title="刷新"><i
+        class="Hui-iconfont">&#xe68f;</i></a></nav>
+<article class="page-container">
+    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l"><a href="/exportAttendanceExcelByAll"
+                                                               class="btn btn-primary radius">导出Excel</a></span><span
+            class="r">共有数据：<strong><span id="listNumSpan"></span></strong> 条</span></div>
+    <table class="table table-border table-bordered table-hover table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="8">签到列表</th>
+        </tr>
+        <tr class="text-c">
+            <th width="40">序号</th>
+            <th width="150">会议名称</th>
+            <th width="150">姓名</th>
+            <th width="90">联系电话</th>
+            <th width="110">购买意向</th>
+            <th width="150">所在地</th>
+            <th width="100">所在医院</th>
+            <th width="110">是否中奖</th>
+        </tr>
+        </thead>
+        <tbody id="userInfoTbody">
+        </tbody>
+    </table>
+    <div class="page_div">
+        <button class="page_btn" id="prePage">上一页</button>
+        <button class="page_btn" id="btn1">1</button>
+        <span id="prePoint">...</span>
+        <button class="page_btn" id="btn2"></button>
+        <button class="page_btn" id="btn3"></button>
+        <button class="page_btn" id="btn4"></button>
+        <button class="page_btn" id="btn5"></button>
+        <button class="page_btn" id="btn6"></button>
+        <span id="sufPoint">...</span>
+        <button class="page_btn" id="btn7"></button>
+        <button class="page_btn" id="sufPage">下一页</button>
+        <div>
+            <input type="hidden" id="meetingIdHidden">
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/pagination/pagination.js"></script>
+<script type="text/javascript">
+    var SIZE = 10;//每页显示条数
+    var currentPage = 1;//当前页码
+    function searchList(page) {
+        page = page || 0;
+        $("#userInfoTbody").html("");
+        $.ajax({
+            type: "POST",
+            url: "/findAttendanceListByCondition",
+            data: {
+                page: page,
+                size: SIZE,
+                sortStr: 'createTime',
+                asc: 'desc',
+                'name': $('#searchName').val()
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    currentPage = page + 1;
+                    $.each(data.data.content, function (index, attendance) {
+                        addAttendanceTr(index, attendance);
+                    });
+                    pageCreate(currentPage, data.data.totalPages);
+                    $("#listNumSpan").html(data.data.totalElements);
+                } else {
+                    alert("获取信息失败");
+                }
+            }
+        });
+    }
+
+    function addAttendanceTr(index, attendance) {
+        var tr = $("<tr>").attr("class", "text-c");
+        $("#userInfoTbody").append(tr);
+
+        var td = $("<td>").html(index + 1);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(attendance.meetingName);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(attendance.name);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(attendance.phone);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(attendance.productName);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(attendance.placeName);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(attendance.hospital);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left");
+        if (attendance.winningRecord != undefined && attendance.winningRecord != null) {
+            if (attendance.winningRecord) {
+                td.html("中奖");
+            } else {
+                td.html("未中奖");
+            }
+        }
+        tr.append(td);
+    }
+
+    $(function () {
+        searchList(0);
+        pageTurning();
+    });
+</script>
+</body>
+</html>

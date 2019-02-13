@@ -1,0 +1,131 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:include="common :: header"></div>
+    <title>添加会议</title>
+    <style>
+        .imgShow {
+            width: 100px;
+            border-radius: 10%;
+        }
+    </style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-meeting-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>会议图片：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <span class="btn-upload form-group">
+                    <input class="input-text upload-url" type="text" readonly nullmsg="请添加附件！" style="width:420px">
+                    <a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+                    <input type="file" name="imgFile" id="imgFile" class="input-file"
+                           onchange="showPreview(this,'imgFileShow')">
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"></label>
+            <div class="formControls col-xs-8 col-sm-10" style="color:red;">会议图片：jpg格式；图片尺寸：750x400或等比例。</div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">图片预览：</label>
+            <div class="formControls col-xs-8 col-sm-10" id="imgFileShow">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>会议信息：</label>
+            <div class="formControls col-xs-8 col-sm-10">
+                <textarea class="input-text" id="info" name="info" cols="" rows="" class="textarea"></textarea>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-10 col-xs-offset-4 col-sm-offset-2">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                <input type="hidden" name="meetingId" id="meetingId" value="">
+            </div>
+        </div>
+    </form>
+</article>
+
+<div th:include="common :: footer"></div>
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="/kindeditor/kindeditor-all.js"></script>
+<script type="text/javascript" src="/kindeditor/lang/zh-CN.js"></script>
+<script type="text/javascript">
+    $(function () {
+        KindEditor.ready(function (K) {
+            window.editor = K.create('#info', {
+                width: '80%',
+                height: '300px',
+                uploadJson: '/fileUpload',
+                fileManagerJson: '/fileManager',
+                allowFileManager: true,
+                urlType: "domain",
+            });
+        });
+
+        var meetingIdVal = parent.document.getElementById("meetingIdHidden").value;
+        if (meetingIdVal) {
+            $("#meetingId").val(meetingIdVal);
+        }
+        $("#form-meeting-add").validate({
+            rules: {
+                info: {
+                    required: true,
+                }
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                if ($("#imgFile").val() != "") {
+                    editor.sync();
+                    $(form).ajaxSubmit({
+                        type: 'post',
+                        url: "/saveSatelliteMeeting",
+                        success: function (data) {
+                            if (data.code == 0) {
+                                layer.msg('操作成功!', {icon: 1, time: 1000});
+                                setTimeout("window.parent.location.reload();", 1000);
+                            } else {
+                                layer.msg(data.msg, {icon: 2, time: 2000});
+                            }
+                        },
+                        error: function (XmlHttpRequest, textStatus, errorThrown) {
+                            layer.msg('操作失败!', {icon: 2, time: 1000});
+                            setTimeout("window.parent.location.reload();", 1000);
+                        }
+                    });
+                } else
+                    layer.msg("会议图片是必填项", {icon: 2, time: 2000});
+            }
+        });
+    });
+
+    function showPreview(object, showId) {
+        let file = object.files[0];
+        let fileCopy = new FileReader();
+        // 分析文件
+        fileCopy.readAsDataURL(file);
+        fileCopy.onload = function () {
+            if (/image/.test(this.result)) {
+                let img = new Image();
+                img.src = this.result;
+                img.className = "imgShow";
+                img.onload = function () {
+                    document.getElementById(showId).innerHTML = "";
+                    document.getElementById(showId).appendChild(img);
+                }
+            }
+        }
+    }
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

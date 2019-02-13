@@ -1,5 +1,6 @@
 package com.hex.base.domain;
 
+import com.hex.base.enums.DefaultImgNameEnum;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -36,6 +37,11 @@ public class Course implements Serializable {
     private String name;
 
     /**
+     * 副标题
+     */
+    private String subtitle;
+
+    /**
      * 简介
      */
     private String intro;
@@ -44,6 +50,11 @@ public class Course implements Serializable {
      * 视频地址
      */
     private String videoPath;
+
+    /**
+     * 视频封面
+     */
+    private String videoImg = DefaultImgNameEnum.VIDEO_IMG.getImgName();
 
     /**
      * 创建时间

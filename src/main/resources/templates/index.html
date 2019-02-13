@@ -2,17 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <div th:include="common :: header"></div>
-<title>瑞得音服务平台</title>
+    <title>科医人会议签到及视频学习系统</title>
+    <style>
+        /*.navbar .logo {
+            height: 74px!important;
+               line-height: 74px!important;
+        }*/
+        .logo-img {
+            width: 191px;
+            height: 74px;
+            background-size: center center;
+            background-image: url('logo.png');
+        }
+    </style>
 </head>
 <body>
 <header class="navbar-wrapper">
 
     <div class="navbar navbar-fixed-top">
 		<div class="container-fluid cl">
-			<a class="logo navbar-logo f-l mr-10 hidden-xs">基础框架</a>
-			<a class="logo navbar-logo-m f-l mr-10 visible-xs">基础框架</a>
-			<span class="logo navbar-slogan f-l mr-10 hidden-xs">v1.0</span> 
-			<a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
+            <a class="logo navbar-logo f-l mr-10 hidden-xs logo-img"></a>
+            <a class="logo navbar-logo-m f-l mr-10 visible-xs logo-img"></a>
+            <span class="logo navbar-slogan f-l mr-10 hidden-xs"></span>
+            <a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
 			<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
 				<ul class="cl">
 					<li><span id="nicknameSpan"></span></li>
@@ -137,12 +149,6 @@
 	                $li=$("<li>");
 	                $a=$("<a>",{"href":"javascript:;"});
 	                $a.attr("onClick","login('登录','/toLogin','350','210')").html("登录");
-	                $li.append($a);
-	                $("#operatorUl").append($li);
-
-	                $li=$("<li>");
-	                $a=$("<a>",{"href":"javascript:;"});
-	                $a.attr("onClick","register('注册工程师','/toExternalEngineerAdd','350','400')").html("注册工程师");
 	                $li.append($a);
 	                $("#operatorUl").append($li);
 				}

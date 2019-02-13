@@ -1,5 +1,6 @@
 package com.hex.base.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 /**
@@ -29,6 +30,7 @@ public class MeetingVO {
     /**
      * 会议小贴士
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String tips;
 
     /**
@@ -50,4 +52,9 @@ public class MeetingVO {
      * 状态
      */
     private String stateStr;
+
+    /**
+     * 是否含抽奖
+     */
+    private Boolean haveLuckyDraw;
 }

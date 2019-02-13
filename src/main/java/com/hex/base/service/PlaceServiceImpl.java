@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * User: hexuan
  * Date: 2018/7/12
@@ -36,5 +38,15 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public void deletePlaceById(String id) {
         placeRepository.delete(id);
+    }
+
+    @Override
+    public List<Place> findTopLevelPlaceList() {
+        return placeRepository.findPlacesByParentIdIsNullOrderById();
+    }
+
+    @Override
+    public List<Place> findSecondLevelPlaceList() {
+        return placeRepository.findPlacesByParentIdIsNotNullOrderById();
     }
 }

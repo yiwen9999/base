@@ -20,13 +20,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * User: hexuan
@@ -50,32 +50,31 @@ public class ScheduleController {
         if (bindingResult.hasErrors()) {
             throw new MyException(ResultEnum.ERROR_PARAM.getCode(), bindingResult.getFieldError().getDefaultMessage());
         }
-        Schedule schedule = new Schedule();
-        if (StringUtils.isNotBlank(scheduleForm.getId())) {
+        if (null != scheduleForm.getMeetingId() && !meetingService.findMeetingExist(scheduleForm.getMeetingId())) {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "会议id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
+
+        Schedule schedule;
+        if (StringUtils.isNotBlank(scheduleForm.getId())) {// 修改
             schedule = scheduleService.findScheduleById(scheduleForm.getId());
             if (null == schedule) {
                 return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "行程id " + ResultEnum.ERROR_PARAM.getMsg());
             }
+        } else {// 新增
+            schedule = new Schedule();
         }
+        String scheduleId = schedule.getId();
         BeanUtils.copyProperties(scheduleForm, schedule);
-
-        /** 新增的创建uuid */
-        if (StringUtils.isBlank(schedule.getId())) {
-            schedule.setId(UUID.randomUUID().toString());
-        }
-
-        if (null != schedule.getMeetingId() && !meetingService.findMeetingExist(schedule.getMeetingId())) {
-            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "会议id " + ResultEnum.ERROR_PARAM.getMsg());
-        }
-
-        if (null != schedule.getSpeakerId()) {
+        schedule.setId(scheduleId);
+        if (null != scheduleForm.getSpeakerId()) {
             Speaker speaker = speakerService.findSpeakerById(schedule.getSpeakerId());
-            if (null == speaker) {
-                return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "讲者id " + ResultEnum.ERROR_PARAM.getMsg());
-            } else {
+            if (null != speaker) {
                 schedule.setSpeakerName(speaker.getName());
             }
+        } else {
+            schedule.setSpeakerName("");
         }
+
         return ResultUtil.success(scheduleService.saveSchedule(schedule).getId());
     }
 
@@ -90,7 +89,7 @@ public class ScheduleController {
         }
     }
 
-    @PostMapping("/findScheduleByCondition")
+    @PostMapping("/findScheduleListByCondition")
     public Object findScheduleByCondition(ScheduleCondition scheduleCondition,
                                           @RequestParam(defaultValue = "0") Integer page,
                                           @RequestParam(defaultValue = "20") Integer size,
@@ -100,5 +99,32 @@ public class ScheduleController {
         Page<Schedule> schedulePage = scheduleService.findScheduleListByCondition(scheduleCondition, pageable);
         List<ScheduleVO> scheduleVOList = Schedule2ScheduleVOConverter.converter(schedulePage.getContent());
         return ResultUtil.success(new PageImpl<>(scheduleVOList, pageable, schedulePage.getTotalElements()));
+    }
+
+    @PostMapping("/findScheduleById")
+    public Object findScheduleById(String scheduleId) {
+        Schedule schedule = scheduleService.findScheduleById(scheduleId);
+        if (null != schedule) {
+            return ResultUtil.success(Schedule2ScheduleVOConverter.converter(schedule));
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "行程id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
+    }
+
+    @CrossOrigin
+    @PostMapping("/findScheduleListViewByMeetingId")
+    public Object findScheduleListViewByMeetingId(Integer meetingId) {
+        return ResultUtil.success(scheduleService.findScheduleForMeetingVOListByMeetingId(meetingId));
+    }
+
+    @PostMapping("/updateScheduleSort")
+    public Object updateScheduleSort(String scheduleId, Integer sort) {
+        Schedule schedule = scheduleService.findScheduleById(scheduleId);
+        if (null != schedule) {
+            schedule.setSort(sort);
+            return ResultUtil.success(Schedule2ScheduleVOConverter.converter(scheduleService.saveSchedule(schedule)));
+        } else {
+            return ResultUtil.error(ResultEnum.ERROR_PARAM.getCode(), "行程id " + ResultEnum.ERROR_PARAM.getMsg());
+        }
     }
 }

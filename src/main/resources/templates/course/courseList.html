@@ -30,25 +30,29 @@
 </head>
 <body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 课程管理 <span
-        class="c-gray en">&gt;</span> 课程列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
-                                              href="javascript:location.replace(location.href);" title="刷新"><i
+        class="c-gray en">&gt;</span> 课程列表<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+                                             href="javascript:location.replace(location.href);" title="刷新"><i
         class="Hui-iconfont">&#xe68f;</i></a></nav>
 <article class="page-container">
-    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l"><a href="javascript:;"
-                                                               onclick="courseAdd('添加商品','/toCourseAdd','800','350')"
-                                                               class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加课程</a></span>
-        <span class="r">共有数据：<strong><span id="listNumSpan"></span></strong> 条</span></div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l">
+        <a href="javascript:;"
+           onclick="courseAdd('添加商品','/toCourseAdd','800','550')" class="btn btn-primary radius"><i
+                class="Hui-iconfont">&#xe600;</i>添加课程</a></span><span class="r">共有数据：<strong><span
+            id="listNumSpan"></span></strong>条</span>
+    </div>
     <table class="table table-border table-bordered table-hover table-bg">
         <thead>
         <tr>
-            <th scope="col" colspan="7">课程列表</th>
+            <th scope="col" colspan="8">课程列表</th>
         </tr>
         <tr class="text-c">
             <th width="40">序号</th>
             <th width="150">名称</th>
+            <th width="150">副标题</th>
             <th width="150">视频路径</th>
             <th width="150">简介</th>
             <th width="150">分类</th>
+            <th width="150">视频封面</th>
             <th width="100">操作</th>
         </tr>
         </thead>
@@ -191,7 +195,10 @@
         var td = $("<td>").html(index + 1);
         tr.append(td);
 
-        td = $("<td>").html(course.name);
+        td = $("<td>").css("text-align", "left").html(course.name);
+        tr.append(td);
+
+        td = $("<td>").css("text-align", "left").html(course.subtitle);
         tr.append(td);
 
         td = $("<td>").css("text-align", "left").html(course.videoPath);
@@ -201,6 +208,11 @@
         tr.append(td);
 
         td = $("<td>").css("text-align", "left").html(course.courseCategoryName);
+        tr.append(td);
+
+        td = $("<td>");
+        if (course.videoImg)
+            td.html("<img src='" + course.videoImg + "' width='50px' height='50px'/>");
         tr.append(td);
 
         /*td=$("<td>").attr("class","td-status");
@@ -225,7 +237,7 @@
         }*/
         var editA = $("<a>").css("text-decoration", "none").attr("href", "javascript:").attr("title", "编辑")
             .click(function () {
-                courseEdit('课程', '/toCourseAdd?courseId=' + course.id, course.id, '800', '350');
+                courseEdit('课程', '/toCourseAdd?courseId=' + course.id, course.id, '800', '550');
             });
         var editLi = $("<i>").attr("class", "Hui-iconfont").html("&#xe6df;&nbsp;&nbsp;");
         var deleteA = $("<a>").css("text-decoration", "none").attr("href", "javascript:").attr("title", "删除")

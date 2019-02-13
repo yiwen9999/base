@@ -192,4 +192,40 @@ public class MySpec {
         };
     }
 
+    public static Specification<Attendance> findAttendances(AttendanceCondition attendanceCondition) {
+        return new Specification<Attendance>() {
+            @Override
+            public Predicate toPredicate(Root<Attendance> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicate = new ArrayList<>();
+
+                if (null != attendanceCondition.getMeetingId()) {
+                    predicate.add(criteriaBuilder.equal(root.get("meetingId").as(Integer.class), attendanceCondition.getMeetingId()));
+                }
+
+                if (null != attendanceCondition.getProductId()) {
+                    predicate.add(criteriaBuilder.equal(root.get("productId").as(Integer.class), attendanceCondition.getProductId()));
+                }
+
+                Predicate[] pre = new Predicate[predicate.size()];
+                return criteriaQuery.where(predicate.toArray(pre)).getRestriction();
+            }
+        };
+    }
+
+    public static Specification<UserInfo> findUserInfos(UserInfoCondition userInfoCondition) {
+        return new Specification<UserInfo>() {
+            @Override
+            public Predicate toPredicate(Root<UserInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicate = new ArrayList<>();
+
+                if (StringUtils.isNotBlank(userInfoCondition.getPlaceId())) {
+                    predicate.add(criteriaBuilder.equal(root.get("placeId").as(String.class), userInfoCondition.getPlaceId()));
+                }
+
+                Predicate[] pre = new Predicate[predicate.size()];
+                return criteriaQuery.where(predicate.toArray(pre)).getRestriction();
+            }
+        };
+    }
+
 }

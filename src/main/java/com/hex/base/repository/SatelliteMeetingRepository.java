@@ -13,4 +13,6 @@ import java.util.List;
 public interface SatelliteMeetingRepository extends JpaRepository<SatelliteMeeting, Integer> {
 
     List<SatelliteMeeting> findAllByMeetingIdOrderByCreateTime(Integer meetingId);
+
+    void deleteAllByIdIn(List<Integer> idList);
 }
